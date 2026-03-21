@@ -127,7 +127,7 @@ html.has-init-error .ui-arrows {
 
 .selector-rack {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -ms-overflow-style: none;
@@ -143,6 +143,7 @@ html.has-init-error .ui-arrows {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   gap: 0;
   position: relative;
   background: none;
