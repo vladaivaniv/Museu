@@ -154,7 +154,11 @@ function updateSelectorVisibility(index) {
 function centerSelectorItem(index, behavior = 'smooth') {
   const item = selectorItems[index];
   if (!item) return;
-  item.scrollIntoView({ behavior, block: 'nearest', inline: 'center' });
+  const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+  const targetLeft = itemCenter - selectorRack.clientWidth / 2;
+  const maxLeft = selectorRack.scrollWidth - selectorRack.clientWidth;
+  const safeLeft = Math.max(0, Math.min(targetLeft, maxLeft));
+  selectorRack.scrollTo({ left: safeLeft, behavior });
 }
 
 /* ── INIT ── */
@@ -164,7 +168,8 @@ function init() {
   gsap.set(sceneDetail, { opacity: 0 });
   gsap.set([uiArrows, btnBack], { opacity: 0, pointerEvents: 'none' });
   updateSelectorVisibility(selectedIndex);
-  centerSelectorItem(selectedIndex, 'auto');
+  requestAnimationFrame(() => centerSelectorItem(selectedIndex, 'auto'));
+  setTimeout(() => centerSelectorItem(selectedIndex, 'auto'), 120);
 
   // Stagger vinyls in
   gsap.from('.selector-item', {
@@ -342,6 +347,7 @@ selectorItems.forEach(item => {
 });
 
 let selectorTicking = false;
+let selectorSnapTimeout;
 selectorRack.addEventListener('scroll', () => {
   if (selectorTicking) return;
   selectorTicking = true;
@@ -349,9 +355,17 @@ selectorRack.addEventListener('scroll', () => {
     const closestIndex = getClosestSelectorIndex();
     selectedIndex = closestIndex;
     updateSelectorVisibility(closestIndex);
+    clearTimeout(selectorSnapTimeout);
+    selectorSnapTimeout = setTimeout(() => {
+      centerSelectorItem(selectedIndex);
+    }, 90);
     selectorTicking = false;
   });
 }, { passive: true });
+
+window.addEventListener('resize', () => {
+  centerSelectorItem(selectedIndex, 'auto');
+});
 
 // Detail: back
 btnBack.addEventListener('click', goBackToSelector);
