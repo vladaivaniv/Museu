@@ -11,6 +11,16 @@ npm run dev
 
 Then open http://localhost:5173 in your browser.
 
+### Screenshot mode
+
+For a static, capture-friendly view (no entrance animations, paused spinning discs, and visible selector labels), open:
+
+```txt
+http://localhost:5173/?screenshot=1
+```
+
+(`?screenshot=true` also works.)
+
 > ⚠️ If you open `index.html` directly (double click), the app will fail because `main.js` imports `gsap` as an npm module. Use the Vite dev server (`npm run dev`) or a production build.
 
 ## Build for Production
