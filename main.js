@@ -152,17 +152,14 @@ function initScene() {
     delay: 0.3,
   });
 
-  // Album cover slides in over the disc after it's been shown
-  gsap.set(heroVinylCover, { opacity: 0, scale: 0.82, rotation: -8 });
+  // Square album cover slides in from the right, rests at -40% (covers left 60% of disc)
+  gsap.set(heroVinylCover, { opacity: 1, x: '110%' });
   gsap.to(heroVinylCover, {
-    opacity: 1,
-    scale: 1,
-    rotation: 0,
-    duration: 0.85,
-    ease: 'back.out(1.5)',
+    x: '-40%',
+    duration: 0.9,
+    ease: 'power3.out',
     delay: 2.0,
     onStart: () => {
-      // Try to play video when cover appears
       if (coverVideo.querySelector('source')) {
         coverVideo.play().catch(() => {});
       }
@@ -180,11 +177,16 @@ function initScene() {
 function transitionToGreen(onComplete) {
   const tl = gsap.timeline({ onComplete });
 
-  // Fade out hero elements (info + cover)
-  tl.to([heroInfo, heroVinylCover], {
+  // Fade out hero info; slide cover back out to the right
+  tl.to(heroInfo, {
     opacity: 0,
     x: 30,
     duration: 0.4,
+    ease: 'power2.in',
+  }, 0);
+  tl.to(heroVinylCover, {
+    x: '110%',
+    duration: 0.35,
     ease: 'power2.in',
   }, 0);
 
@@ -369,14 +371,12 @@ function transitionGreenToDark(onComplete) {
   tl.set(heroInfo, { opacity: 0, x: 30 });
   tl.to(heroInfo, { opacity: 1, x: 0, duration: 0.65, ease: 'power3.out' }, '-=0.3');
 
-  // Cover re-appears after info settles
-  tl.set(heroVinylCover, { opacity: 0, scale: 0.82, rotation: -8, x: 0 });
+  // Cover slides in again from the right
+  tl.set(heroVinylCover, { x: '110%' });
   tl.to(heroVinylCover, {
-    opacity: 1,
-    scale: 1,
-    rotation: 0,
+    x: '-40%',
     duration: 0.75,
-    ease: 'back.out(1.5)',
+    ease: 'power3.out',
   }, '-=0.3');
 
   return tl;
