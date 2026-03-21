@@ -41,16 +41,12 @@
 
         <!-- Giant green vinyl (hero) -->
         <div class="hero-vinyl-wrap" id="hero-vinyl-wrap">
-          <div class="hero-vinyl-disc" id="hero-vinyl-disc">
-            <!-- Album cover with video (appears after disc) -->
-          <div class="hero-vinyl-cover" id="hero-vinyl-cover">
-            <video class="cover-video" id="cover-video" autoplay muted loop playsinline>
-              <!-- Replace with your video source -->
-              <!-- <source src="cover-video.mp4" type="video/mp4" /> -->
-            </video>
-          </div>
 
-          <!-- Green vinyl SVG -->
+          <!-- Static album cover — sits on top of the disc, does NOT spin -->
+          <div class="hero-vinyl-cover" id="hero-vinyl-cover"></div>
+
+          <div class="hero-vinyl-disc" id="hero-vinyl-disc">
+            <!-- Green vinyl SVG -->
             <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
               <defs>
                 <clipPath id="hero-label-clip">

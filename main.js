@@ -22,7 +22,6 @@ const sceneBrown     = document.getElementById('scene-brown-focus');
 
 const heroVinylDisc  = document.getElementById('hero-vinyl-disc');
 const heroVinylCover = document.getElementById('hero-vinyl-cover');
-const coverVideo     = document.getElementById('cover-video');
 const heroInfo       = document.getElementById('hero-info');
 
 const ghostGreen     = document.getElementById('ghost-text-green');
@@ -159,11 +158,6 @@ function initScene() {
     duration: 0.9,
     ease: 'power3.out',
     delay: 2.0,
-    onStart: () => {
-      if (coverVideo.querySelector('source')) {
-        coverVideo.play().catch(() => {});
-      }
-    },
   });
 
   setUIMode('light');
