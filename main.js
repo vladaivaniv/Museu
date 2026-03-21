@@ -100,6 +100,26 @@ const btnPrev        = document.getElementById('btn-prev');
 const btnNext        = document.getElementById('btn-next');
 const uiArrows       = document.getElementById('ui-arrows');
 
+const requiredNodes = [
+  stage,
+  sceneSelector,
+  sceneDetail,
+  selectorRack,
+  detailCover,
+  detailVinylWrap,
+  detailInfo,
+  detailTitle,
+  detailDesc,
+  btnBack,
+  btnPrev,
+  btnNext,
+  uiArrows,
+];
+
+if (requiredNodes.some(node => !node) || selectorItems.length !== vinyls.length || detailDiscs.length !== vinyls.length) {
+  throw new Error('[VIINYL] DOM structure does not match expected selector/detail elements.');
+}
+
 /* ── STATE ── */
 let currentView     = 'selector';
 let selectedIndex   = 0;
@@ -124,7 +144,7 @@ function showDisc(index) {
 function populateDetail(index) {
   const v = vinyls[index];
   if (!v) { console.error('[VIINYL] No vinyl at index', index); return; }
-  detailTitle.innerHTML = `${v.title}<br/>${v.artist}`;
+  detailTitle.textContent = `${v.title} — ${v.artist}`;
   detailDesc.textContent = v.desc;
   stage.style.background = v.bg;
   showDisc(index);
@@ -152,6 +172,7 @@ function getClosestSelectorIndex() {
 function updateSelectorVisibility(index) {
   selectorItems.forEach((item, i) => {
     item.classList.remove('is-center', 'is-side', 'is-hidden');
+    item.setAttribute('aria-current', i === index ? 'true' : 'false');
     const distance = Math.abs(i - index);
     if (distance === 0) item.classList.add('is-center');
     else if (distance === 1) item.classList.add('is-side');
@@ -356,6 +377,28 @@ selectorItems.forEach(item => {
   item.addEventListener('click', () => {
     openDetail(parseInt(item.dataset.index, 10));
   });
+  item.addEventListener('keydown', event => {
+    const index = parseInt(item.dataset.index, 10);
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openDetail(index);
+      return;
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      const nextIndex = Math.min(index + 1, vinyls.length - 1);
+      selectedIndex = nextIndex;
+      centerSelectorItem(nextIndex);
+      updateSelectorVisibility(nextIndex);
+    }
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      const prevIndex = Math.max(index - 1, 0);
+      selectedIndex = prevIndex;
+      centerSelectorItem(prevIndex);
+      updateSelectorVisibility(prevIndex);
+    }
+  });
 });
 
 let selectorTicking = false;
@@ -413,6 +456,7 @@ let dragStartX   = 0;
 let isDragging   = false;
 document.addEventListener('mousedown', e => {
   if (currentView !== 'detail') return;
+  if (e.target instanceof HTMLElement && e.target.closest('button')) return;
   dragStartX = e.clientX;
   isDragging = true;
 });

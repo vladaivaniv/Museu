@@ -11,6 +11,8 @@ npm run dev
 
 Then open http://localhost:5173 in your browser.
 
+> ⚠️ If you open `index.html` directly (double click), the app will fail because `main.js` imports `gsap` as an npm module. Use the Vite dev server (`npm run dev`) or a production build.
+
 ## Build for Production
 
 ```bash
@@ -32,9 +34,9 @@ npm run preview
 ## Scene Flow
 
 ```
-[01] Dark Hero  →  [02] Green Focus  →  [03] Brown Focus
-                                              ↓
-[05] Dark Hero  ←  [04] Green Focus  ←  (3D flip)
+Selector Scene  →  Detail Scene
+Detail Scene    →  Back to Selector
+Detail Scene    →  Previous / Next vinyl
 ```
 
 ## Navigation
