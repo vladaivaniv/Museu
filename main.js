@@ -7,7 +7,8 @@
  *   detail    →  (drag / arrow) →  next / prev vinyl detail
  */
 
-import { gsap } from 'gsap';
+// gsap loaded from ./vendor/gsap.min.js
+/* global gsap */
 
 /* ── VINYL DATA ── */
 const vinyls = [
