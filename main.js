@@ -7,8 +7,7 @@
  *   detail    →  (drag / arrow) →  next / prev vinyl detail
  */
 
-// gsap loaded via CDN script tag in index.html
-/* global gsap */
+import { gsap } from 'gsap';
 
 /* ── VINYL DATA ── */
 const vinyls = [
