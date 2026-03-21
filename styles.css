@@ -139,6 +139,13 @@ html, body {
 .selector-item:hover {
   background: rgba(255, 255, 255, 0.04);
 }
+.selector-item:focus-visible,
+.btn-back:focus-visible,
+.hero-purchase-btn:focus-visible,
+.arrow-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 3px;
+}
 .selector-item.is-center { opacity: 1; transform: scale(1); }
 .selector-item.is-side   { opacity: 0.6; transform: scale(0.84); }
 .selector-item.is-hidden {
@@ -282,13 +289,14 @@ html, body {
 
 .detail-title {
   font-family: var(--font-condensed);
-  font-size: 4.5rem;
+  font-size: clamp(2.1rem, 6vw, 4.5rem);
   font-weight: 900;
-  line-height: 0.9;
+  line-height: 0.95;
   text-transform: uppercase;
   color: #ffffff;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
   margin-bottom: 1.4rem;
+  text-wrap: balance;
 }
 
 .detail-desc {
@@ -422,4 +430,13 @@ html, body {
   .detail-info { right: 1rem; left: 42%; }
   .detail-title { font-size: 2.2rem; }
   .detail-vinyl-wrap { width: 260px; height: 260px; left: 30%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
