@@ -258,8 +258,8 @@ html, body {
   z-index: 5;
   background: #000;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
+  transform: translateX(-58%);
   will-change: transform;
-  /* resting x set by JS: translateX(-58%) */
 }
 
 /* Spinning disc */

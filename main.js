@@ -7,8 +7,7 @@
  *   detail    →  (drag / arrow) →  next / prev vinyl detail
  */
 
-// gsap loaded from ./vendor/gsap.min.js
-/* global gsap */
+import { gsap } from 'gsap';
 
 /* ── VINYL DATA ── */
 const vinyls = [
@@ -107,6 +106,15 @@ let selectedIndex   = 0;
 let isTransitioning = false;
 
 /* ── HELPERS ── */
+
+const DETAIL_COVER_REST_X = '-58%';
+
+function resetDetailTransforms() {
+  gsap.set(detailCover, { x: DETAIL_COVER_REST_X });
+  gsap.set(detailVinylWrap, { x: 0, y: 0 });
+  gsap.set(detailInfo, { x: 0, y: 0 });
+}
+
 function showDisc(index) {
   detailDiscs.forEach((d, i) => {
     gsap.set(d, { display: i === index ? 'block' : 'none' });
@@ -166,6 +174,7 @@ function init() {
   selectedIndex = 0;
   sceneSelector.classList.add('is-active');
   gsap.set(sceneDetail, { opacity: 0 });
+  resetDetailTransforms();
   gsap.set([uiArrows, btnBack], { opacity: 0, pointerEvents: 'none' });
   updateSelectorVisibility(selectedIndex);
   requestAnimationFrame(() => centerSelectorItem(selectedIndex, 'auto'));
@@ -190,6 +199,7 @@ function openDetail(index) {
 
   populateDetail(index);
   gsap.set(detailCover, { x: '110%' });
+  gsap.set([detailVinylWrap, detailInfo], { x: 0, y: 0 });
   gsap.set(detailInfo,  { opacity: 0, x: 40 });
   gsap.set(detailVinylWrap, { scale: 0.88, opacity: 0 });
 
@@ -236,7 +246,7 @@ function openDetail(index) {
 
   // Cover slides over disc
   tl.to(detailCover, {
-    x: '-58%',
+    x: DETAIL_COVER_REST_X,
     duration: 0.85,
     ease: 'power3.out',
   }, '-=0.3');
@@ -274,6 +284,7 @@ function goBackToSelector() {
     sceneSelector.classList.add('is-active');
     gsap.set(sceneSelector, { opacity: 1 });
     stage.style.background = '';
+    resetDetailTransforms();
     updateSelectorVisibility(selectedIndex);
     centerSelectorItem(selectedIndex, 'auto');
     // Reset selector items for animation
@@ -319,6 +330,7 @@ function navigateDetail(direction /* +1 | -1 */) {
   tl.call(() => {
     populateDetail(next);
     gsap.set(detailCover, { x: '110%' });
+    gsap.set([detailVinylWrap, detailInfo], { x: 0, y: 0 });
     gsap.set([detailInfo, detailVinylWrap], { x: enterX, opacity: 0 });
   });
 
@@ -331,7 +343,7 @@ function navigateDetail(direction /* +1 | -1 */) {
   });
 
   tl.to(detailCover, {
-    x: '-58%',
+    x: DETAIL_COVER_REST_X,
     duration: 0.75,
     ease: 'power3.out',
   }, '-=0.35');
@@ -365,6 +377,7 @@ selectorRack.addEventListener('scroll', () => {
 
 window.addEventListener('resize', () => {
   centerSelectorItem(selectedIndex, 'auto');
+  if (currentView === 'detail') resetDetailTransforms();
 });
 
 // Detail: back
