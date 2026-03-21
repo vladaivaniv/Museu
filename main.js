@@ -233,14 +233,13 @@ function init() {
   setTimeout(() => centerSelectorItem(selectedIndex, 'auto'), 120);
 
   // Stagger vinyls in (disabled in screenshot mode for a static capture-ready view)
+  // Avoid fading from opacity 0 on first paint (looks like a dark overlay on slower mobile loads).
   if (!isScreenshotMode) {
     gsap.from('.selector-item', {
-      y: 50,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.18,
-      ease: 'power3.out',
-      delay: 0.2,
+      y: 24,
+      duration: 0.45,
+      stagger: 0.06,
+      ease: 'power2.out',
     });
   }
 }
