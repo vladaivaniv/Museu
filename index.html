@@ -1,531 +1,320 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VINYL — Galería</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      width: 100%; height: 100%;
-      overflow: hidden;
-      font-family: 'Space Grotesk', system-ui, sans-serif;
-      background: #000;
-    }
-
-    /* ── NAV ── */
-    .nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 1.6rem 2.2rem;
-      display: flex; align-items: center;
-      pointer-events: none;
-    }
-    .nav > * { pointer-events: auto; }
-
-    .nav-links {
-      display: flex; gap: 2.2rem; list-style: none;
-    }
-    .nav-links a {
-      font-size: 0.68rem; font-weight: 500;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      text-decoration: none; color: #0f0f0f; opacity: 0.75;
-      transition: opacity 0.2s;
-    }
-    .nav-links a:hover { opacity: 1; }
-
-    .nav-title {
-      position: absolute; left: 50%; transform: translateX(-50%);
-      font-size: 0.78rem; font-weight: 700;
-      letter-spacing: 0.28em; text-transform: uppercase;
-      color: #0f0f0f;
-    }
-
-    .nav-menu {
-      margin-left: auto; cursor: pointer;
-      display: flex; flex-direction: column; gap: 5px;
-    }
-    .nav-menu span {
-      display: block; height: 1.5px; background: #0f0f0f;
-      transition: width 0.2s;
-    }
-    .nav-menu span:first-child { width: 22px; }
-    .nav-menu span:last-child  { width: 14px; }
-
-    /* ── GALLERY ── */
-    .gallery {
-      position: fixed; inset: 0; overflow: hidden;
-    }
-
-    /* ── SLIDE ── */
-    .slide {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      z-index: 0;
-    }
-    .slide.is-active  { z-index: 1; }
-    .slide.is-entering { z-index: 2; }
-
-    /* ── BACKGROUND TITLE ── */
-    .bg-title {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      padding: 0 2vw;
-      pointer-events: none; user-select: none;
-    }
-    .bg-title-text {
-      font-size: clamp(4.5rem, 19vw, 21rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 0.87;
-      text-align: center;
-      text-transform: uppercase;
-      white-space: pre-line;
-      opacity: 1;
-    }
-
-    /* ── RECORDS CONTAINER ── */
-    .records-container {
-      position: relative;
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    /* ── VINYL WRAP ── */
-    .vinyl-wrap {
-      position: absolute;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .vinyl-wrap.is-center {
-      position: relative;
-      width: min(52vh, 52vw); height: min(52vh, 52vw);
-      z-index: 2;
-    }
-    .vinyl-wrap.is-side-left {
-      right: calc(100% - 6vw);
-      width: min(43vh, 43vw); height: min(43vh, 43vw);
-      z-index: 1;
-    }
-    .vinyl-wrap.is-side-right {
-      left: calc(100% - 6vw);
-      width: min(43vh, 43vw); height: min(43vh, 43vw);
-      z-index: 1;
-    }
-
-    /* ── VINYL DISC ── */
-    .vinyl-disc {
-      position: relative;
-      width: 100%; height: 100%;
-      border-radius: 50%;
-      animation: disc-spin 5s linear infinite;
-    }
-    @keyframes disc-spin { to { transform: rotate(360deg); } }
-
-    .vinyl-svg {
-      width: 100%; height: 100%;
-      border-radius: 50%;
-      box-shadow:
-        0 22px 65px rgba(0,0,0,0.45),
-        0 4px 14px rgba(0,0,0,0.55);
-    }
-
-    /* Glow behind center record */
-    .vinyl-glow {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80%; height: 80%;
-      border-radius: 50%;
-      filter: blur(55px);
-      opacity: 0.35;
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    /* ── COUNTER ── */
-    .ui-counter {
-      position: fixed; bottom: 2rem; left: 2.2rem;
-      z-index: 100;
-      color: #0f0f0f;
-      line-height: 1;
-      display: flex; align-items: baseline; gap: 0.05em;
-    }
-    .counter-num {
-      font-size: 2.6rem; font-weight: 700;
-      letter-spacing: -0.04em;
-    }
-    .counter-total {
-      font-size: 1.1rem; font-weight: 400;
-      opacity: 0.6;
-    }
-
-    /* ── ARROWS ── */
-    .ui-arrows {
-      position: fixed; bottom: 2rem; right: 2.2rem;
-      z-index: 100;
-      display: flex; gap: 0.65rem;
-    }
-    .arrow-btn {
-      width: 3rem; height: 3rem;
-      border-radius: 50%;
-      border: 1.5px solid rgba(10,10,10,0.55);
-      background: transparent;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: #0f0f0f;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-    }
-    .arrow-btn:hover { opacity: 1; }
-    .arrow-btn svg {
-      width: 0.9rem; height: 0.9rem;
-      stroke: currentColor; fill: none;
-      stroke-width: 1.8;
-      stroke-linecap: round; stroke-linejoin: round;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VIINYL — Vinyl Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- NAV -->
-  <header class="nav" role="banner">
-    <nav aria-label="Navegación principal">
-      <ul class="nav-links">
-        <li><a href="#">Shop</a></li>
-        <li><a href="#">Artists</a></li>
-        <li><a href="#">Top</a></li>
-      </ul>
-    </nav>
-    <div class="nav-title" aria-hidden="true">Vinyl</div>
-    <div class="nav-menu" aria-label="Menú" role="button" tabindex="0">
-      <span></span><span></span>
-    </div>
-  </header>
+  <!-- VIEWPORT CENTERING WRAPPER -->
+  <div class="viewport-wrap">
 
-  <!-- GALLERY -->
-  <main class="gallery" id="gallery" aria-label="Galería de obras"></main>
+    <!-- STAGE: the main rounded container -->
+    <div class="stage" id="stage">
 
-  <!-- COUNTER -->
-  <div class="ui-counter" aria-live="polite" aria-atomic="true">
-    <span class="counter-num" id="counter-num">01</span><span class="counter-total" id="counter-total">/06</span>
-  </div>
+      <!-- NAV -->
+      <nav class="nav" role="navigation" aria-label="Main navigation">
+        <ul class="nav-links">
+          <li><a href="#">SHOP</a></li>
+          <li><a href="#">ARTISTS</a></li>
+          <li><a href="#">TOP</a></li>
+        </ul>
+        <div class="nav-brand">VIINYL</div>
+        <div class="nav-hamburger" role="button" tabindex="0" aria-label="Menu">
+          <span class="ham-line ham-line--long"></span>
+          <span class="ham-line ham-line--short"></span>
+        </div>
+      </nav>
 
-  <!-- ARROWS -->
-  <div class="ui-arrows">
-    <button class="arrow-btn" id="btn-prev" aria-label="Obra anterior">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <button class="arrow-btn" id="btn-next" aria-label="Obra siguiente">
-      <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
-    </button>
-  </div>
+      <!-- ═══════════════════════════════════════════════════
+           SCENE 1: DARK HERO
+      ════════════════════════════════════════════════════ -->
+      <section class="scene scene--dark-hero" id="scene-dark-hero" aria-label="Dark Hero">
 
-  <script>
-    /* ── DATA ── */
-    const artworks = [
-      {
-        title: 'LA NOCHE\nESTRELLADA',
-        artist: 'Vincent van Gogh',
-        year: '1889',
-        bg:        '#2e6fc0',
-        bgText:    '#3d82d4',
-        vinylBase: '#2060b0',
-        glow:      '#6aa8e8',
-        labelBg:   '#1a4d98',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-      },
-      {
-        title: 'LA GRAN\nOLA',
-        artist: 'Katsushika Hokusai',
-        year: '1831',
-        bg:        '#1a7a95',
-        bgText:    '#2896b5',
-        vinylBase: '#12607a',
-        glow:      '#50b8d8',
-        labelBg:   '#0e5060',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/800px-Tsunami_by_hokusai_19th_century.jpg',
-      },
-      {
-        title: 'LA JOVEN\nDE LA PERLA',
-        artist: 'Johannes Vermeer',
-        year: '1665',
-        bg:        '#6535a0',
-        bgText:    '#7e50bc',
-        vinylBase: '#4f2885',
-        glow:      '#a878e0',
-        labelBg:   '#3e1f70',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/800px-1665_Girl_with_a_Pearl_Earring.jpg',
-      },
-      {
-        title: 'EL\nGRITO',
-        artist: 'Edvard Munch',
-        year: '1893',
-        bg:        '#bf4020',
-        bgText:    '#d85838',
-        vinylBase: '#9e3015',
-        glow:      '#f07050',
-        labelBg:   '#7a2010',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg',
-      },
-      {
-        title: 'NENÚ\nFARES',
-        artist: 'Claude Monet',
-        year: '1906',
-        bg:        '#2e8f48',
-        bgText:    '#3da85a',
-        vinylBase: '#206835',
-        glow:      '#60c878',
-        labelBg:   '#185530',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/800px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg',
-      },
-      {
-        title: 'EL\nBESO',
-        artist: 'Gustav Klimt',
-        year: '1907',
-        bg:        '#b88510',
-        bgText:    '#d09e28',
-        vinylBase: '#906208',
-        glow:      '#e0b840',
-        labelBg:   '#705008',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/800px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg',
-      },
-    ];
+        <!-- Left portrait panel -->
+        <div class="hero-portrait-panel"></div>
 
-    const TOTAL = artworks.length;
+        <!-- Giant green vinyl (hero) -->
+        <div class="hero-vinyl-wrap" id="hero-vinyl-wrap">
+          <div class="hero-vinyl-disc" id="hero-vinyl-disc">
+            <!-- Green vinyl SVG -->
+            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
+              <defs>
+                <clipPath id="hero-label-clip">
+                  <circle cx="100" cy="100" r="42"/>
+                </clipPath>
+                <radialGradient id="hero-groove-grad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="rgba(20,160,55,0.82)"/>
+                  <stop offset="100%" stop-color="rgba(10,100,30,0.9)"/>
+                </radialGradient>
+              </defs>
+              <!-- Base disc -->
+              <circle cx="100" cy="100" r="100" fill="rgba(20,160,55,0.82)"/>
+              <!-- Groove rings -->
+              <circle cx="100" cy="100" r="50" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="52.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="55" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="57.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="62.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="65" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="67.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="72.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="77.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="82.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="87.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="92.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="97.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <!-- Sheen -->
+              <ellipse cx="80" cy="65" rx="30" ry="18" fill="rgba(255,255,255,0.06)" transform="rotate(-35 100 100)"/>
+              <!-- Label -->
+              <circle cx="100" cy="100" r="42" fill="#e8e0d0"/>
+              <circle cx="100" cy="100" r="41" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+              <text x="100" y="93" text-anchor="middle" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#1a1a1a" letter-spacing="0.5">DON'T CARE</text>
+              <text x="100" y="101" text-anchor="middle" font-size="4" font-family="sans-serif" fill="#555" letter-spacing="0.3">A&amp;M RECORDS</text>
+              <text x="100" y="109" text-anchor="middle" font-size="4.5" font-family="sans-serif" font-weight="600" fill="#1a1a1a" letter-spacing="0.3">KLARK KENT</text>
+              <!-- Center hole -->
+              <circle cx="100" cy="100" r="4.5" fill="#f5f5f0"/>
+              <circle cx="100" cy="100" r="3" fill="#d0cdc8"/>
+            </svg>
+          </div>
+        </div>
 
-    /* ── DOM REFS ── */
-    const gallery     = document.getElementById('gallery');
-    const counterNum  = document.getElementById('counter-num');
-    const counterTotal = document.getElementById('counter-total');
-    const btnPrev     = document.getElementById('btn-prev');
-    const btnNext     = document.getElementById('btn-next');
+        <!-- Right info block -->
+        <div class="hero-info" id="hero-info">
+          <h1 class="hero-title">DON'T CARE<br/>KLARK KENT</h1>
+          <p class="hero-desc">
+            A rare limited-edition pressing from 1980.<br/>
+            Stewart Copeland's alter ego project — post-punk perfection on green vinyl.
+          </p>
+          <button class="hero-purchase-btn" type="button">PURCHASE</button>
+        </div>
 
-    counterTotal.textContent = `/${String(TOTAL).padStart(2, '0')}`;
+      </section>
 
-    let current   = 0;
-    let animating = false;
+      <!-- ═══════════════════════════════════════════════════
+           SCENE 2: GREEN FOCUS (slider 01/05)
+      ════════════════════════════════════════════════════ -->
+      <section class="scene scene--green-focus" id="scene-green-focus" aria-label="Green Focus Slider">
 
-    /* ── BUILD VINYL SVG ── */
-    function buildVinylSVG(artwork) {
-      const ns = 'http://www.w3.org/2000/svg';
-      const svg = document.createElementNS(ns, 'svg');
-      svg.setAttribute('viewBox', '0 0 200 200');
-      svg.setAttribute('class', 'vinyl-svg');
-      svg.setAttribute('aria-hidden', 'true');
+        <!-- Ghost text background -->
+        <div class="ghost-text ghost-text--green" id="ghost-text-green" aria-hidden="true">
+          <span>DON'T<br/>CARE</span>
+        </div>
 
-      // Defs: clip for label image, groove pattern
-      const defs = document.createElementNS(ns, 'defs');
+        <!-- Left partial vinyl -->
+        <div class="vinyl-side vinyl-side--left" id="vinyl-left-green">
+          <div class="vinyl-disc-wrap">
+            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
+              <circle cx="100" cy="100" r="100" fill="rgba(18,140,50,0.75)"/>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="38" fill="#e8e0d0"/>
+              <circle cx="100" cy="100" r="4" fill="#f0ede8"/>
+            </svg>
+          </div>
+        </div>
 
-      // Clip path for label (circular)
-      const clipId = `lc-${Math.random().toString(36).slice(2,7)}`;
-      const clipPath = document.createElementNS(ns, 'clipPath');
-      clipPath.setAttribute('id', clipId);
-      const clipCircle = document.createElementNS(ns, 'circle');
-      clipCircle.setAttribute('cx', '100'); clipCircle.setAttribute('cy', '100'); clipCircle.setAttribute('r', '42');
-      clipPath.appendChild(clipCircle);
-      defs.appendChild(clipPath);
+        <!-- Center green vinyl -->
+        <div class="vinyl-center vinyl-center--green" id="vinyl-center-green">
+          <div class="vinyl-disc-wrap vinyl-disc-wrap--spin" id="vinyl-center-green-disc">
+            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
+              <defs>
+                <clipPath id="green-label-clip">
+                  <circle cx="100" cy="100" r="42"/>
+                </clipPath>
+              </defs>
+              <circle cx="100" cy="100" r="100" fill="rgba(22,160,60,0.85)"/>
+              <circle cx="100" cy="100" r="50" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="52.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="55" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="57.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="62.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="65" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="67.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="72.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="77.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="82.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="87.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="92.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
+              <!-- Sheen -->
+              <ellipse cx="80" cy="65" rx="30" ry="18" fill="rgba(255,255,255,0.06)" transform="rotate(-35 100 100)"/>
+              <!-- Label -->
+              <circle cx="100" cy="100" r="42" fill="#e8e0d0"/>
+              <circle cx="100" cy="100" r="41" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+              <text x="100" y="93" text-anchor="middle" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#1a1a1a" letter-spacing="0.5">DON'T CARE</text>
+              <text x="100" y="101" text-anchor="middle" font-size="4" font-family="sans-serif" fill="#555" letter-spacing="0.3">A&amp;M RECORDS</text>
+              <text x="100" y="109" text-anchor="middle" font-size="4.5" font-family="sans-serif" font-weight="600" fill="#1a1a1a" letter-spacing="0.3">KLARK KENT</text>
+              <circle cx="100" cy="100" r="4.5" fill="#f5f5f0"/>
+              <circle cx="100" cy="100" r="3" fill="#d0cdc8"/>
+            </svg>
+          </div>
+        </div>
 
-      svg.appendChild(defs);
+        <!-- Right partial vinyl -->
+        <div class="vinyl-side vinyl-side--right" id="vinyl-right-green">
+          <div class="vinyl-disc-wrap">
+            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
+              <circle cx="100" cy="100" r="100" fill="rgba(18,140,50,0.75)"/>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="38" fill="#e8e0d0"/>
+              <circle cx="100" cy="100" r="4" fill="#f0ede8"/>
+            </svg>
+          </div>
+        </div>
 
-      // ── Base vinyl disc (colored)
-      const disc = document.createElementNS(ns, 'circle');
-      disc.setAttribute('cx', '100'); disc.setAttribute('cy', '100'); disc.setAttribute('r', '100');
-      disc.setAttribute('fill', artwork.vinylBase);
-      svg.appendChild(disc);
+      </section>
 
-      // ── Groove rings (concentric, slight opacity difference)
-      for (let r = 48; r < 98; r += 2.5) {
-        const groove = document.createElementNS(ns, 'circle');
-        groove.setAttribute('cx', '100'); groove.setAttribute('cy', '100');
-        groove.setAttribute('r', String(r));
-        groove.setAttribute('fill', 'none');
-        groove.setAttribute('stroke', 'rgba(0,0,0,0.22)');
-        groove.setAttribute('stroke-width', '0.7');
-        svg.appendChild(groove);
-        const grooveLt = document.createElementNS(ns, 'circle');
-        grooveLt.setAttribute('cx', '100'); grooveLt.setAttribute('cy', '100');
-        grooveLt.setAttribute('r', String(r + 1));
-        grooveLt.setAttribute('fill', 'none');
-        grooveLt.setAttribute('stroke', 'rgba(255,255,255,0.04)');
-        grooveLt.setAttribute('stroke-width', '0.5');
-        svg.appendChild(grooveLt);
-      }
+      <!-- ═══════════════════════════════════════════════════
+           DIAGONAL WIPE OVERLAY
+      ════════════════════════════════════════════════════ -->
+      <div class="wipe-overlay" id="wipe-overlay" aria-hidden="true">
+        <svg class="wipe-svg" id="wipe-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <polygon id="wipe-polygon" points="110,0 110,0 110,100 110,100"/>
+        </svg>
+      </div>
 
-      // ── Sheen highlight
-      const sheen = document.createElementNS(ns, 'ellipse');
-      sheen.setAttribute('cx', '80'); sheen.setAttribute('cy', '65');
-      sheen.setAttribute('rx', '30'); sheen.setAttribute('ry', '18');
-      sheen.setAttribute('fill', 'rgba(255,255,255,0.07)');
-      sheen.setAttribute('transform', 'rotate(-35 100 100)');
-      svg.appendChild(sheen);
+      <!-- ═══════════════════════════════════════════════════
+           SCENE 3: BROWN FOCUS (slider 02/05)
+      ════════════════════════════════════════════════════ -->
+      <section class="scene scene--brown-focus" id="scene-brown-focus" aria-label="Brown Focus Slider">
 
-      // ── Label background circle
-      const labelBg = document.createElementNS(ns, 'circle');
-      labelBg.setAttribute('cx', '100'); labelBg.setAttribute('cy', '100'); labelBg.setAttribute('r', '42');
-      labelBg.setAttribute('fill', artwork.labelBg);
-      svg.appendChild(labelBg);
+        <!-- Ghost text background -->
+        <div class="ghost-text ghost-text--brown" id="ghost-text-brown" aria-hidden="true">
+          <span>EMI<br/>5040</span>
+        </div>
 
-      // ── Label artwork image
-      const img = document.createElementNS(ns, 'image');
-      img.setAttribute('href', artwork.image);
-      img.setAttribute('x', '58'); img.setAttribute('y', '58');
-      img.setAttribute('width', '84'); img.setAttribute('height', '84');
-      img.setAttribute('clip-path', `url(#${clipId})`);
-      img.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-      svg.appendChild(img);
+        <!-- Left partial vinyl (green) -->
+        <div class="vinyl-side vinyl-side--left" id="vinyl-left-brown">
+          <div class="vinyl-disc-wrap">
+            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
+              <circle cx="100" cy="100" r="100" fill="rgba(22,160,60,0.85)"/>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="38" fill="#e8e0d0"/>
+              <circle cx="100" cy="100" r="4" fill="#f0ede8"/>
+            </svg>
+          </div>
+        </div>
 
-      // ── Label ring
-      const labelRing = document.createElementNS(ns, 'circle');
-      labelRing.setAttribute('cx', '100'); labelRing.setAttribute('cy', '100'); labelRing.setAttribute('r', '42');
-      labelRing.setAttribute('fill', 'none');
-      labelRing.setAttribute('stroke', 'rgba(255,255,255,0.15)');
-      labelRing.setAttribute('stroke-width', '1');
-      svg.appendChild(labelRing);
+        <!-- Center black vinyl -->
+        <div class="vinyl-center vinyl-center--black" id="vinyl-center-black">
+          <div class="vinyl-disc-wrap vinyl-disc-wrap--3d" id="vinyl-center-black-disc">
+            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
+              <defs>
+                <clipPath id="black-label-clip">
+                  <circle cx="100" cy="100" r="40"/>
+                </clipPath>
+              </defs>
+              <circle cx="100" cy="100" r="100" fill="#111111"/>
+              <circle cx="100" cy="100" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="52.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="55" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="57.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="62.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="65" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="67.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="72.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="77.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="82.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="87.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <circle cx="100" cy="100" r="92.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
+              <!-- Sheen -->
+              <ellipse cx="80" cy="65" rx="28" ry="16" fill="rgba(255,255,255,0.04)" transform="rotate(-35 100 100)"/>
+              <!-- Label: warm tan -->
+              <circle cx="100" cy="100" r="40" fill="#c8784a"/>
+              <circle cx="100" cy="100" r="39" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+              <text x="100" y="90" text-anchor="middle" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#fff" letter-spacing="0.5">EMI 5040</text>
+              <text x="100" y="99" text-anchor="middle" font-size="4" font-family="sans-serif" fill="rgba(255,255,255,0.8)" letter-spacing="0.3">WHAT'S YOUR NUMBER</text>
+              <text x="100" y="108" text-anchor="middle" font-size="4.5" font-family="sans-serif" font-weight="600" fill="#fff" letter-spacing="0.3">SNIPS</text>
+              <circle cx="100" cy="100" r="4.5" fill="#f5f5f0"/>
+              <circle cx="100" cy="100" r="3" fill="#d0cdc8"/>
+            </svg>
+          </div>
+        </div>
 
-      // ── Center hole
-      const hole = document.createElementNS(ns, 'circle');
-      hole.setAttribute('cx', '100'); hole.setAttribute('cy', '100'); hole.setAttribute('r', '4.5');
-      hole.setAttribute('fill', '#f0f0ee');
-      svg.appendChild(hole);
-      const holeInner = document.createElementNS(ns, 'circle');
-      holeInner.setAttribute('cx', '100'); holeInner.setAttribute('cy', '100'); holeInner.setAttribute('r', '3');
-      holeInner.setAttribute('fill', '#c8c8c5');
-      svg.appendChild(holeInner);
+        <!-- Right partial vinyl (white) -->
+        <div class="vinyl-side vinyl-side--right" id="vinyl-right-brown">
+          <div class="vinyl-disc-wrap">
+            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
+              <circle cx="100" cy="100" r="100" fill="#f0f0ee"/>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
+              <circle cx="100" cy="100" r="34" fill="#1a1a1a"/>
+              <circle cx="100" cy="100" r="4" fill="#f0ede8"/>
+            </svg>
+          </div>
+        </div>
 
-      return svg;
-    }
+      </section>
 
-    /* ── BUILD VINYL WRAP ── */
-    function buildVinyl(artwork, sizeClass) {
-      const wrap = document.createElement('div');
-      wrap.className = `vinyl-wrap ${sizeClass}`;
+      <!-- ═══════════════════════════════════════════════════
+           GRAIN OVERLAY
+      ════════════════════════════════════════════════════ -->
+      <div class="grain-overlay" aria-hidden="true"></div>
 
-      const disc = document.createElement('div');
-      disc.className = 'vinyl-disc';
+      <!-- ═══════════════════════════════════════════════════
+           COUNTER
+      ════════════════════════════════════════════════════ -->
+      <div class="ui-counter" id="ui-counter" aria-live="polite" aria-atomic="true">
+        <span class="counter-num" id="counter-num">01</span>
+        <span class="counter-sep">/</span>
+        <span class="counter-total">05</span>
+      </div>
 
-      // Glow (only visible on center via CSS)
-      const glow = document.createElement('div');
-      glow.className = 'vinyl-glow';
-      glow.style.background = artwork.glow;
-      disc.appendChild(glow);
+      <!-- ═══════════════════════════════════════════════════
+           ARROW BUTTONS
+      ════════════════════════════════════════════════════ -->
+      <div class="ui-arrows" id="ui-arrows">
+        <button class="arrow-btn" id="btn-prev" type="button" aria-label="Previous">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        <button class="arrow-btn" id="btn-next" type="button" aria-label="Next">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <polyline points="9 6 15 12 9 18"/>
+          </svg>
+        </button>
+      </div>
 
-      disc.appendChild(buildVinylSVG(artwork));
-      wrap.appendChild(disc);
-      return wrap;
-    }
+    </div><!-- /stage -->
+  </div><!-- /viewport-wrap -->
 
-    /* ── BUILD ALL SLIDES ── */
-    function buildSlides() {
-      artworks.forEach((aw, i) => {
-        const slide = document.createElement('div');
-        slide.className = 'slide' + (i === 0 ? ' is-active' : '');
-        slide.dataset.index = i;
-        slide.style.background = aw.bg;
-
-        // BG title
-        const bgTitle = document.createElement('div');
-        bgTitle.className = 'bg-title';
-        const bgText = document.createElement('div');
-        bgText.className = 'bg-title-text';
-        bgText.style.color = aw.bgText;
-        bgText.style.opacity = '0.28';
-        bgText.textContent = aw.title;
-        bgTitle.appendChild(bgText);
-        slide.appendChild(bgTitle);
-
-        // Records
-        const container = document.createElement('div');
-        container.className = 'records-container';
-
-        const prevIdx = (i - 1 + TOTAL) % TOTAL;
-        const nextIdx = (i + 1) % TOTAL;
-
-        container.appendChild(buildVinyl(artworks[prevIdx], 'is-side-left'));
-        container.appendChild(buildVinyl(aw, 'is-center'));
-        container.appendChild(buildVinyl(artworks[nextIdx], 'is-side-right'));
-
-        slide.appendChild(container);
-        gallery.appendChild(slide);
-      });
-    }
-
-    buildSlides();
-
-    /* ── HELPERS ── */
-    function getSlide(idx) {
-      return gallery.querySelector(`.slide[data-index="${idx}"]`);
-    }
-
-    function pad(n) {
-      return String(n + 1).padStart(2, '0');
-    }
-
-    /* ── NAVIGATE ── */
-    function navigate(dir) {
-      if (animating) return;
-      animating = true;
-
-      const prevIdx = current;
-      current = dir === 'next'
-        ? (current + 1) % TOTAL
-        : (current - 1 + TOTAL) % TOTAL;
-
-      const prevSlide    = getSlide(prevIdx);
-      const enterSlide   = getSlide(current);
-
-      // Position entering slide off-screen with initial clip-path
-      if (dir === 'next') {
-        // Enter from right: top-left corner leads (top moves further left than bottom)
-        enterSlide.style.clipPath = 'polygon(120% 0%, 140% 0%, 140% 100%, 120% 100%)';
-      } else {
-        // Enter from left: bottom-right corner leads
-        enterSlide.style.clipPath = 'polygon(-140% 0%, -120% 0%, -80% 100%, -120% 100%)';
-      }
-
-      enterSlide.classList.add('is-entering');
-      enterSlide.classList.remove('is-active');
-
-      // Force reflow so the initial clip-path is applied
-      enterSlide.getBoundingClientRect();
-
-      // Animate clip-path to fully visible
-      enterSlide.style.transition = 'clip-path 0.9s cubic-bezier(0.76, 0, 0.24, 1)';
-      enterSlide.style.clipPath   = 'polygon(-20% 0%, 120% 0%, 120% 100%, -20% 100%)';
-
-      // Clean up after transition
-      setTimeout(() => {
-        enterSlide.style.transition = '';
-        enterSlide.style.clipPath   = '';
-        enterSlide.classList.remove('is-entering');
-        enterSlide.classList.add('is-active');
-        prevSlide.classList.remove('is-active');
-        counterNum.textContent = pad(current);
-        animating = false;
-      }, 920);
-    }
-
-    /* ── EVENT LISTENERS ── */
-    btnNext.addEventListener('click', () => navigate('next'));
-    btnPrev.addEventListener('click', () => navigate('prev'));
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate('next');
-      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate('prev');
-    });
-
-    // Touch swipe
-    let touchX = 0;
-    document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
-    document.addEventListener('touchend', e => {
-      const dx = e.changedTouches[0].clientX - touchX;
-      if (Math.abs(dx) > 50) navigate(dx < 0 ? 'next' : 'prev');
-    });
-  </script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
