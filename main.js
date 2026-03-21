@@ -134,8 +134,15 @@ const requiredNodes = [
   uiArrows,
 ];
 
-if (requiredNodes.some(node => !node) || selectorItems.length !== vinyls.length || detailDiscs.length !== vinyls.length) {
-  throw new Error('[VIINYL] DOM structure does not match expected selector/detail elements.');
+const isDomStructureValid = !(
+  requiredNodes.some(node => !node) ||
+  selectorItems.length !== vinyls.length ||
+  detailDiscs.length !== vinyls.length
+);
+
+if (!isDomStructureValid) {
+  console.error('[VIINYL] DOM structure does not match expected selector/detail elements.');
+  document.documentElement.classList.add('has-init-error');
 }
 
 /* ── STATE ── */
@@ -504,6 +511,7 @@ document.addEventListener('mouseup', e => {
 /* ── START ── */
 ensureGsapLoaded()
   .then((loadedGsap) => {
+    if (!isDomStructureValid) return;
     gsap = loadedGsap;
     if (!gsap) {
       throw new Error('[VIINYL] GSAP loaded but window.gsap is unavailable.');
@@ -512,4 +520,5 @@ ensureGsapLoaded()
   })
   .catch((error) => {
     console.error(error);
+    document.documentElement.classList.add('has-init-error');
   });
