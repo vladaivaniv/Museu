@@ -14,17 +14,73 @@
 const vinyls = [
   {
     id: 0,
-    title: 'DON\'T CARE',
+    title: "DON'T CARE",
     artist: 'KLARK KENT',
-    desc: `Klark Kent is the debut solo album of Stewart Copeland, and the first solo album recorded by any band member of The Police. The album was released in 1980 as a 10 inch EP on green vinyl. It was later re-released on black vinyl as a 12 inch with a grey and black sleeve. It includes the song "Don't Care", which had entered the UK Top 50 two years earlier.`,
+    desc: `Klark Kent is the debut solo album of Stewart Copeland, drummer of The Police. Released in 1980 as a 10-inch EP on green vinyl. Includes "Don't Care", which entered the UK Top 50 in 1978. A pioneering artifact of the post-punk solo project.`,
     bg: '#0c1812',
   },
   {
     id: 1,
-    title: 'WHAT\'S YOUR NUMBER',
+    title: "WHAT'S YOUR NUMBER",
     artist: 'SNIPS',
-    desc: `A rare UK post-punk single released on EMI in 1980. Snips, the frontman of Baker Gurvitz Army, delivered this driving new wave cut on black vinyl with a striking warm-label pressing. Sought after by collectors of early 80s British punk ephemera.`,
+    desc: `A rare UK post-punk single released on EMI in 1980. Snips, frontman of Baker Gurvitz Army, delivered this driving new wave cut on black vinyl with a striking warm-label pressing. Sought after by collectors of early 80s British punk ephemera.`,
     bg: '#180e06',
+  },
+  {
+    id: 2,
+    title: 'LONDON CALLING',
+    artist: 'THE CLASH',
+    desc: `Released December 1979 on CBS Records, London Calling is one of the defining albums of the punk era. The double LP, priced as a single, features 19 tracks spanning punk, reggae, rockabilly and pop. Pressed on crimson red vinyl for limited editions.`,
+    bg: '#1a0608',
+  },
+  {
+    id: 3,
+    title: 'LOVE WILL TEAR US APART',
+    artist: 'JOY DIVISION',
+    desc: `Released posthumously in June 1980 on Factory Records, weeks after Ian Curtis's death. Joy Division's most celebrated single, its stark synthesizer melody and Curtis's baritone have become emblematic of post-punk. Pressed on midnight blue vinyl.`,
+    bg: '#050818',
+  },
+  {
+    id: 4,
+    title: 'ONCE IN A LIFETIME',
+    artist: 'TALKING HEADS',
+    desc: `From the 1980 album Remain in Light, produced by Brian Eno. A landmark of new wave, blending West African polyrhythms with funk and David Byrne's stream-of-consciousness lyrics. The ivory vinyl pressing is among the most sought-after of the era.`,
+    bg: '#181208',
+  },
+  {
+    id: 5,
+    title: 'HONG KONG GARDEN',
+    artist: 'SIOUXSIE & THE BANSHEES',
+    desc: `The debut single from Siouxsie and the Banshees, released 1978 on Polydor. A hypnotic, sitar-infused post-punk anthem that reached number 7 in the UK charts. This purple pressing is a prized rarity among gothic rock collectors.`,
+    bg: '#0e0718',
+  },
+  {
+    id: 6,
+    title: 'EVER FALLEN IN LOVE',
+    artist: 'BUZZCOCKS',
+    desc: `Released September 1978 on United Artists. Written by Pete Shelley, widely regarded as the Buzzcocks' finest moment—a perfect pop-punk single about unrequited love and frustration. The burnt orange vinyl is a limited collectors' edition.`,
+    bg: '#180a02',
+  },
+  {
+    id: 7,
+    title: 'GOING UNDERGROUND',
+    artist: 'THE JAM',
+    desc: `Released March 1980 on Polydor Records. The first single ever to enter the UK charts at number one. A furious attack on consumerism and apathy, driven by Paul Weller's razor-sharp guitar. Yellow vinyl limited press from the original run.`,
+    bg: '#161400',
+  },
+  {
+    id: 8,
+    title: 'OUTDOOR MINER',
+    artist: 'WIRE',
+    desc: `Released January 1979 on Harvest Records. Written by Colin Newman and Graham Lewis, inspired by the serpentine leafminer insect. A two-minute gem of minimalist post-punk — the band's most accessible single, pressed on teal vinyl.`,
+    bg: '#031410',
+  },
+  {
+    id: 9,
+    title: 'SHOT BY BOTH SIDES',
+    artist: 'MAGAZINE',
+    desc: `The debut single from Magazine, released February 1978 on Virgin Records. Howard Devoto's first post-Buzzcocks project announced itself with this jagged, literary post-punk masterpiece. Reached UK #41. The magenta pressing is a collector's gem.`,
+    bg: '#14040e',
   },
 ];
 
@@ -37,10 +93,7 @@ const detailVinylWrap = document.getElementById('detail-vinyl-wrap');
 const detailInfo     = document.getElementById('detail-info');
 const detailTitle    = document.getElementById('detail-title');
 const detailDesc     = document.getElementById('detail-desc');
-const detailDiscs    = [
-  document.getElementById('detail-disc-0'),
-  document.getElementById('detail-disc-1'),
-];
+const detailDiscs    = Array.from(document.querySelectorAll('.detail-disc'));
 const btnBack        = document.getElementById('btn-back');
 const btnPrev        = document.getElementById('btn-prev');
 const btnNext        = document.getElementById('btn-next');

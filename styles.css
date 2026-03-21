@@ -85,20 +85,23 @@ html, body {
 
 .selector-rack {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 5rem;
+  align-items: flex-start;
+  gap: 1.2rem 2.5rem;
+  max-width: 960px;
+  padding: 0 1.5rem;
 }
 
 .selector-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.6rem;
+  gap: 0.9rem;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 1rem;
+  padding: 0.75rem;
   border-radius: 1rem;
   transition: background 0.25s;
 }
@@ -107,17 +110,17 @@ html, body {
 }
 
 .selector-disc {
-  width: 260px;
-  height: 260px;
+  width: 150px;
+  height: 150px;
   animation: disc-spin-slow 14s linear infinite;
-  filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.6));
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
               filter 0.35s ease;
   will-change: transform;
 }
 .selector-item:hover .selector-disc {
-  transform: scale(1.09);
-  filter: drop-shadow(0 18px 55px rgba(0, 0, 0, 0.7));
+  transform: scale(1.1);
+  filter: drop-shadow(0 14px 42px rgba(0, 0, 0, 0.75));
 }
 
 .selector-meta {
@@ -129,17 +132,17 @@ html, body {
 
 .selector-title {
   font-family: var(--font-condensed);
-  font-size: 1.15rem;
+  font-size: 0.9rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.85);
 }
 
 .selector-artist {
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   font-weight: 400;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.38);
 }
@@ -355,19 +358,14 @@ html, body {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
-  .selector-rack { gap: 3rem; }
-  .selector-disc { width: 200px; height: 200px; }
-  .detail-vinyl-wrap {
-    width: 300px;
-    height: 300px;
-    left: 32%;
-  }
+  .selector-rack { gap: 1rem 1.5rem; }
+  .selector-disc { width: 120px; height: 120px; }
+  .detail-vinyl-wrap { width: 300px; height: 300px; left: 32%; }
   .detail-title { font-size: 3rem; }
 }
 
 @media (max-width: 600px) {
-  .selector-rack { flex-direction: column; gap: 2rem; }
-  .selector-disc { width: 180px; height: 180px; }
+  .selector-disc { width: 100px; height: 100px; }
   .detail-info { right: 1rem; left: 42%; }
   .detail-title { font-size: 2.2rem; }
   .detail-vinyl-wrap { width: 260px; height: 260px; left: 30%; }
