@@ -168,7 +168,6 @@ html.has-init-error .ui-arrows {
 .selector-item.is-hidden {
   opacity: 0.05;
   transform: scale(0.74);
-  pointer-events: none;
 }
 
 .selector-disc {
