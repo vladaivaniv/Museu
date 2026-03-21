@@ -7,12 +7,23 @@
  *   detail    →  (drag / arrow) →  next / prev vinyl detail
  */
 
-import './vendor/gsap.min.js';
+let gsap = window.gsap;
 
-const gsap = window.gsap;
+async function ensureGsapLoaded() {
+  if (window.gsap) return window.gsap;
 
-if (!gsap) {
-  throw new Error('[VIINYL] GSAP failed to load. Ensure vendor/gsap.min.js is served before main.js.');
+  const scriptUrl = new URL('./vendor/gsap.min.js', import.meta.url).href;
+
+  await new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`[VIINYL] Failed to load GSAP from ${scriptUrl}`));
+    document.head.appendChild(script);
+  });
+
+  return window.gsap;
 }
 
 /* ── VINYL DATA ── */
@@ -491,4 +502,14 @@ document.addEventListener('mouseup', e => {
 });
 
 /* ── START ── */
-init();
+ensureGsapLoaded()
+  .then((loadedGsap) => {
+    gsap = loadedGsap;
+    if (!gsap) {
+      throw new Error('[VIINYL] GSAP loaded but window.gsap is unavailable.');
+    }
+    init();
+  })
+  .catch((error) => {
+    console.error(error);
+  });
