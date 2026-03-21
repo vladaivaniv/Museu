@@ -215,6 +215,12 @@ function centerSelectorItem(index, behavior = 'smooth') {
   selectorRack.scrollTo({ left: safeLeft, behavior });
 }
 
+function syncSelectorStateToViewport() {
+  const closestIndex = getClosestSelectorIndex();
+  selectedIndex = closestIndex;
+  updateSelectorVisibility(closestIndex);
+}
+
 /* ── INIT ── */
 function init() {
   if (isScreenshotMode) {
@@ -229,8 +235,14 @@ function init() {
   resetDetailTransforms();
   gsap.set([uiArrows, btnBack], { opacity: 0, pointerEvents: 'none' });
   updateSelectorVisibility(selectedIndex);
-  requestAnimationFrame(() => centerSelectorItem(selectedIndex, 'auto'));
-  setTimeout(() => centerSelectorItem(selectedIndex, 'auto'), 120);
+  requestAnimationFrame(() => {
+    centerSelectorItem(selectedIndex, 'auto');
+    syncSelectorStateToViewport();
+  });
+  setTimeout(() => {
+    centerSelectorItem(selectedIndex, 'auto');
+    syncSelectorStateToViewport();
+  }, 120);
 
   // Stagger vinyls in (disabled in screenshot mode for a static capture-ready view)
   // Avoid fading from opacity 0 on first paint (looks like a dark overlay on slower mobile loads).
@@ -457,6 +469,7 @@ selectorRack.addEventListener('scroll', () => {
 
 window.addEventListener('resize', () => {
   centerSelectorItem(selectedIndex, 'auto');
+  syncSelectorStateToViewport();
   if (currentView === 'detail') resetDetailTransforms();
 });
 
