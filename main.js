@@ -7,8 +7,7 @@
  *   detail    →  (drag / arrow) →  next / prev vinyl detail
  */
 
-// gsap loaded via CDN script tag in index.html
-/* global gsap */
+import { gsap } from 'gsap';
 
 /* ── VINYL DATA ── */
 const vinyls = [
@@ -163,7 +162,7 @@ function centerSelectorItem(index, behavior = 'smooth') {
 
 /* ── INIT ── */
 function init() {
-  selectedIndex = Math.min(1, selectorItems.length - 1);
+  selectedIndex = 0;
   sceneSelector.classList.add('is-active');
   gsap.set(sceneDetail, { opacity: 0 });
   gsap.set([uiArrows, btnBack], { opacity: 0, pointerEvents: 'none' });
