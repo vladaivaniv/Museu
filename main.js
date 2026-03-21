@@ -7,7 +7,13 @@
  *   detail    →  (drag / arrow) →  next / prev vinyl detail
  */
 
-import { gsap } from 'gsap';
+import './vendor/gsap.min.js';
+
+const gsap = window.gsap;
+
+if (!gsap) {
+  throw new Error('[VIINYL] GSAP failed to load. Ensure vendor/gsap.min.js is served before main.js.');
+}
 
 /* ── VINYL DATA ── */
 const vinyls = [
