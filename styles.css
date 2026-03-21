@@ -68,6 +68,18 @@ body.is-screenshot-mode {
   z-index: 2;
 }
 
+/* Fallback: if JS initialization fails, keep selector scene visible. */
+html.has-init-error .scene--selector {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+html.has-init-error .scene--detail,
+html.has-init-error .ui-arrows {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ═══════════════════════════════════════════════
    SCENE: SELECTOR
 ═══════════════════════════════════════════════ */
