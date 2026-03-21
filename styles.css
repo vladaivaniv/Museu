@@ -47,61 +47,6 @@ html, body {
   transition: background 0.6s ease;
 }
 
-/* ── NAV ── */
-.nav {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  padding: 1.5rem 2rem;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-}
-.nav > * { pointer-events: auto; }
-
-.nav-links {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-}
-.nav-links a {
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.45);
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: rgba(255, 255, 255, 0.85); }
-
-.nav-brand {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.nav-hamburger {
-  margin-left: auto;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.ham-line {
-  display: block;
-  height: 1.5px;
-  background: rgba(255, 255, 255, 0.6);
-}
-.ham-line--long  { width: 22px; }
-.ham-line--short { width: 14px; }
 
 /* ── SCENE BASE ── */
 .scene {
@@ -209,7 +154,7 @@ html, body {
 /* Back button */
 .btn-back {
   position: absolute;
-  top: 5.5rem;
+  top: 1.8rem;
   left: 2rem;
   z-index: 10;
   display: inline-flex;
