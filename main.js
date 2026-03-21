@@ -11,7 +11,8 @@
  * The counter shows:               01 → 02 → 03 → 04 → 05
  */
 
-import { gsap } from 'gsap';
+// gsap loaded via CDN script tag in index.html
+/* global gsap */
 
 /* ── DOM REFERENCES ── */
 const stage          = document.getElementById('stage');
