@@ -88,6 +88,8 @@ const vinyls = [
 const stage          = document.getElementById('stage');
 const sceneSelector  = document.getElementById('scene-selector');
 const sceneDetail    = document.getElementById('scene-detail');
+const selectorRack   = document.getElementById('selector-rack');
+const selectorItems  = Array.from(document.querySelectorAll('.selector-item'));
 const detailCover    = document.getElementById('detail-cover');
 const detailVinylWrap = document.getElementById('detail-vinyl-wrap');
 const detailInfo     = document.getElementById('detail-info');
@@ -120,11 +122,49 @@ function populateDetail(index) {
   showDisc(index);
 }
 
+function getClosestSelectorIndex() {
+  const rackRect = selectorRack.getBoundingClientRect();
+  const rackCenter = rackRect.left + rackRect.width / 2;
+  let closestIndex = 0;
+  let closestDist = Number.POSITIVE_INFINITY;
+
+  selectorItems.forEach((item, index) => {
+    const rect = item.getBoundingClientRect();
+    const itemCenter = rect.left + rect.width / 2;
+    const dist = Math.abs(itemCenter - rackCenter);
+    if (dist < closestDist) {
+      closestDist = dist;
+      closestIndex = index;
+    }
+  });
+
+  return closestIndex;
+}
+
+function updateSelectorVisibility(index) {
+  selectorItems.forEach((item, i) => {
+    item.classList.remove('is-center', 'is-side', 'is-hidden');
+    const distance = Math.abs(i - index);
+    if (distance === 0) item.classList.add('is-center');
+    else if (distance === 1) item.classList.add('is-side');
+    else item.classList.add('is-hidden');
+  });
+}
+
+function centerSelectorItem(index, behavior = 'smooth') {
+  const item = selectorItems[index];
+  if (!item) return;
+  item.scrollIntoView({ behavior, block: 'nearest', inline: 'center' });
+}
+
 /* ── INIT ── */
 function init() {
+  selectedIndex = Math.min(1, selectorItems.length - 1);
   sceneSelector.classList.add('is-active');
   gsap.set(sceneDetail, { opacity: 0 });
   gsap.set([uiArrows, btnBack], { opacity: 0, pointerEvents: 'none' });
+  updateSelectorVisibility(selectedIndex);
+  centerSelectorItem(selectedIndex, 'auto');
 
   // Stagger vinyls in
   gsap.from('.selector-item', {
@@ -229,6 +269,8 @@ function goBackToSelector() {
     sceneSelector.classList.add('is-active');
     gsap.set(sceneSelector, { opacity: 1 });
     stage.style.background = '';
+    updateSelectorVisibility(selectedIndex);
+    centerSelectorItem(selectedIndex, 'auto');
     // Reset selector items for animation
     gsap.set('.selector-item', { y: 40, opacity: 0 });
   });
@@ -293,11 +335,23 @@ function navigateDetail(direction /* +1 | -1 */) {
 /* ── EVENT LISTENERS ── */
 
 // Selector: click to open
-document.querySelectorAll('.selector-item').forEach(item => {
+selectorItems.forEach(item => {
   item.addEventListener('click', () => {
     openDetail(parseInt(item.dataset.index, 10));
   });
 });
+
+let selectorTicking = false;
+selectorRack.addEventListener('scroll', () => {
+  if (selectorTicking) return;
+  selectorTicking = true;
+  requestAnimationFrame(() => {
+    const closestIndex = getClosestSelectorIndex();
+    selectedIndex = closestIndex;
+    updateSelectorVisibility(closestIndex);
+    selectorTicking = false;
+  });
+}, { passive: true });
 
 // Detail: back
 btnBack.addEventListener('click', goBackToSelector);

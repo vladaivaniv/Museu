@@ -71,7 +71,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
+  gap: 1.25rem;
 }
 
 .selector-heading {
@@ -115,65 +115,87 @@ html, body {
   scroll-snap-type: x mandatory;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding: 2rem 0;
-  /* each item is 1/3 so 3 are visible at once */
+  padding: 1.5rem 14vw 2.8rem;
+  /* centered hero disc + partial side discs */
 }
 .selector-rack::-webkit-scrollbar { display: none; }
 
 .selector-item {
-  flex: 0 0 33.333%;
+  flex: 0 0 52%;
   scroll-snap-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.2rem;
+  gap: 0;
+  position: relative;
   background: none;
   border: none;
   cursor: pointer;
   padding: 1rem 0.5rem;
   border-radius: 1rem;
-  transition: background 0.25s;
+  transition: background 0.25s, transform 0.4s ease, opacity 0.4s ease;
+  transform-origin: center 70%;
 }
 .selector-item:hover {
   background: rgba(255, 255, 255, 0.04);
 }
+.selector-item.is-center { opacity: 1; transform: scale(1); }
+.selector-item.is-side   { opacity: 0.6; transform: scale(0.84); }
+.selector-item.is-hidden {
+  opacity: 0.05;
+  transform: scale(0.74);
+  pointer-events: none;
+}
 
 .selector-disc {
-  width: min(200px, 20vw);
-  height: min(200px, 20vw);
+  width: clamp(300px, 34vw, 430px);
+  height: clamp(300px, 34vw, 430px);
   animation: disc-spin-slow 14s linear infinite;
   filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.6));
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
               filter 0.35s ease;
   will-change: transform;
+  position: relative;
+  z-index: 3;
 }
 .selector-item:hover .selector-disc {
-  transform: scale(1.1);
+  transform: scale(1.06);
   filter: drop-shadow(0 14px 42px rgba(0, 0, 0, 0.75));
 }
 
 .selector-meta {
+  margin-top: -6.8rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+  text-align: center;
+  transition: opacity 0.3s ease;
 }
+.selector-item:not(.is-center) .selector-meta { opacity: 0; }
 
 .selector-title {
   font-family: var(--font-condensed);
-  font-size: 0.9rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  font-size: clamp(2.8rem, 8vw, 7.5rem);
+  font-weight: 900;
+  letter-spacing: 0.015em;
+  line-height: 0.86;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.11);
+  max-width: 6.6ch;
+  text-wrap: balance;
 }
 
 .selector-artist {
-  font-size: 0.62rem;
-  font-weight: 400;
-  letter-spacing: 0.12em;
+  margin-top: 0.55rem;
+  font-size: clamp(0.65rem, 1vw, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.38);
+  color: rgba(255, 255, 255, 0.42);
 }
 
 /* ═══════════════════════════════════════════════
@@ -392,7 +414,11 @@ html, body {
 }
 
 @media (max-width: 600px) {
-  .selector-item { flex: 0 0 80%; }
+  .selector-rack { padding: 1.6rem 7vw 3rem; }
+  .selector-item { flex: 0 0 92%; }
+  .selector-disc { width: min(290px, 74vw); height: min(290px, 74vw); }
+  .selector-meta { margin-top: -5.6rem; opacity: 1; }
+  .selector-title { font-size: clamp(2.5rem, 20vw, 6rem); }
   .detail-info { right: 1rem; left: 42%; }
   .detail-title { font-size: 2.2rem; }
   .detail-vinyl-wrap { width: 260px; height: 260px; left: 30%; }
