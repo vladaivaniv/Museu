@@ -163,7 +163,7 @@ function centerSelectorItem(index, behavior = 'smooth') {
 
 /* ── INIT ── */
 function init() {
-  selectedIndex = Math.min(1, selectorItems.length - 1);
+  selectedIndex = 0;
   sceneSelector.classList.add('is-active');
   gsap.set(sceneDetail, { opacity: 0 });
   gsap.set([uiArrows, btnBack], { opacity: 0, pointerEvents: 'none' });
