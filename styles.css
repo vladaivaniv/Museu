@@ -192,6 +192,57 @@ html, body {
   transform-style: preserve-3d;
 }
 
+/* Album cover over vinyl disc */
+.hero-vinyl-cover {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0;
+  z-index: 5;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.08);
+  transform-origin: center center;
+  will-change: opacity, transform;
+}
+
+.cover-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Fallback gradient when no video is loaded */
+.hero-vinyl-cover:not(:has(source)) .cover-video,
+.cover-video:not([src]) {
+  background: radial-gradient(
+    circle at 40% 35%,
+    #1a3a28 0%,
+    #0a1a10 60%,
+    #050e08 100%
+  );
+}
+
+/* Play hint icon shown when no video is playing */
+.cover-play-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+/* Hide hint when video has a source */
+.hero-vinyl-cover:has(source) .cover-play-hint {
+  display: none;
+}
+
 /* Hero info block */
 .hero-info {
   position: absolute;

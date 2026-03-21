@@ -21,6 +21,8 @@ const sceneGreen     = document.getElementById('scene-green-focus');
 const sceneBrown     = document.getElementById('scene-brown-focus');
 
 const heroVinylDisc  = document.getElementById('hero-vinyl-disc');
+const heroVinylCover = document.getElementById('hero-vinyl-cover');
+const coverVideo     = document.getElementById('cover-video');
 const heroInfo       = document.getElementById('hero-info');
 
 const ghostGreen     = document.getElementById('ghost-text-green');
@@ -150,6 +152,23 @@ function initScene() {
     delay: 0.3,
   });
 
+  // Album cover slides in over the disc after it's been shown
+  gsap.set(heroVinylCover, { opacity: 0, scale: 0.82, rotation: -8 });
+  gsap.to(heroVinylCover, {
+    opacity: 1,
+    scale: 1,
+    rotation: 0,
+    duration: 0.85,
+    ease: 'back.out(1.5)',
+    delay: 2.0,
+    onStart: () => {
+      // Try to play video when cover appears
+      if (coverVideo.querySelector('source')) {
+        coverVideo.play().catch(() => {});
+      }
+    },
+  });
+
   setUIMode('light');
 }
 
@@ -161,8 +180,8 @@ function initScene() {
 function transitionToGreen(onComplete) {
   const tl = gsap.timeline({ onComplete });
 
-  // Fade out hero elements
-  tl.to([heroInfo], {
+  // Fade out hero elements (info + cover)
+  tl.to([heroInfo, heroVinylCover], {
     opacity: 0,
     x: 30,
     duration: 0.4,
@@ -349,6 +368,16 @@ function transitionGreenToDark(onComplete) {
   // Hero info re-enters
   tl.set(heroInfo, { opacity: 0, x: 30 });
   tl.to(heroInfo, { opacity: 1, x: 0, duration: 0.65, ease: 'power3.out' }, '-=0.3');
+
+  // Cover re-appears after info settles
+  tl.set(heroVinylCover, { opacity: 0, scale: 0.82, rotation: -8, x: 0 });
+  tl.to(heroVinylCover, {
+    opacity: 1,
+    scale: 1,
+    rotation: 0,
+    duration: 0.75,
+    ease: 'back.out(1.5)',
+  }, '-=0.3');
 
   return tl;
 }
