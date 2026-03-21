@@ -11,10 +11,7 @@
 </head>
 <body>
 
-  <!-- VIEWPORT CENTERING WRAPPER -->
   <div class="viewport-wrap">
-
-    <!-- STAGE: the main rounded container -->
     <div class="stage" id="stage">
 
       <!-- NAV -->
@@ -32,144 +29,96 @@
       </nav>
 
       <!-- ═══════════════════════════════════════════════════
-           SCENE 1: DARK HERO
+           SCENE: SELECTOR
       ════════════════════════════════════════════════════ -->
-      <section class="scene scene--dark-hero" id="scene-dark-hero" aria-label="Dark Hero">
+      <section class="scene scene--selector" id="scene-selector" aria-label="Vinyl Selector">
 
-        <!-- Left portrait panel -->
-        <div class="hero-portrait-panel"></div>
+        <p class="selector-heading" aria-hidden="true">SELECT A RECORD</p>
 
-        <!-- Giant green vinyl (hero) -->
-        <div class="hero-vinyl-wrap" id="hero-vinyl-wrap">
+        <div class="selector-rack" id="selector-rack">
 
-          <!-- Static album cover — sits on top of the disc, does NOT spin -->
-          <div class="hero-vinyl-cover" id="hero-vinyl-cover"></div>
+          <!-- Vinyl 0: Green — Klark Kent -->
+          <button class="selector-item" data-index="0" type="button" aria-label="Don't Care — Klark Kent">
+            <div class="selector-disc">
+              <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
+                <circle cx="100" cy="100" r="100" fill="rgba(22,160,60,0.88)"/>
+                <circle cx="100" cy="100" r="50" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+                <circle cx="100" cy="100" r="62" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+                <circle cx="100" cy="100" r="74" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+                <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+                <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
+                <ellipse cx="80" cy="65" rx="30" ry="18" fill="rgba(255,255,255,0.06)" transform="rotate(-35 100 100)"/>
+                <circle cx="100" cy="100" r="36" fill="#e8e0d0"/>
+                <text x="100" y="96" text-anchor="middle" font-size="5" font-family="sans-serif" font-weight="700" fill="#1a1a1a">DON'T CARE</text>
+                <text x="100" y="105" text-anchor="middle" font-size="4" font-family="sans-serif" fill="#555">KLARK KENT</text>
+                <circle cx="100" cy="100" r="3.5" fill="#d0cdc8"/>
+              </svg>
+            </div>
+            <div class="selector-meta">
+              <span class="selector-title">DON'T CARE</span>
+              <span class="selector-artist">KLARK KENT</span>
+            </div>
+          </button>
 
-          <div class="hero-vinyl-disc" id="hero-vinyl-disc">
-            <!-- Green vinyl SVG -->
+          <!-- Vinyl 1: Black — Snips -->
+          <button class="selector-item" data-index="1" type="button" aria-label="What's Your Number — Snips">
+            <div class="selector-disc">
+              <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
+                <circle cx="100" cy="100" r="100" fill="#111111"/>
+                <circle cx="100" cy="100" r="50" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.7"/>
+                <circle cx="100" cy="100" r="62" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.7"/>
+                <circle cx="100" cy="100" r="74" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.7"/>
+                <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.7"/>
+                <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.7"/>
+                <ellipse cx="80" cy="65" rx="28" ry="16" fill="rgba(255,255,255,0.04)" transform="rotate(-35 100 100)"/>
+                <circle cx="100" cy="100" r="36" fill="#c8784a"/>
+                <text x="100" y="97" text-anchor="middle" font-size="4.5" font-family="sans-serif" font-weight="700" fill="#fff">WHAT'S YOUR</text>
+                <text x="100" y="106" text-anchor="middle" font-size="4.5" font-family="sans-serif" font-weight="700" fill="#fff">NUMBER</text>
+                <circle cx="100" cy="100" r="3.5" fill="#f5f5f0"/>
+              </svg>
+            </div>
+            <div class="selector-meta">
+              <span class="selector-title">WHAT'S YOUR NUMBER</span>
+              <span class="selector-artist">SNIPS</span>
+            </div>
+          </button>
+
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════
+           SCENE: DETAIL
+      ════════════════════════════════════════════════════ -->
+      <section class="scene scene--detail" id="scene-detail" aria-label="Vinyl Detail">
+
+        <!-- Back button -->
+        <button class="btn-back" id="btn-back" type="button" aria-label="Back to all records">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          ALL RECORDS
+        </button>
+
+        <!-- Vinyl wrap: static cover + spinning disc -->
+        <div class="detail-vinyl-wrap" id="detail-vinyl-wrap">
+
+          <!-- Static album cover (does not spin) -->
+          <div class="detail-cover" id="detail-cover"></div>
+
+          <!-- Disc 0: Green vinyl -->
+          <div class="detail-disc" id="detail-disc-0">
             <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
-              <defs>
-                <clipPath id="hero-label-clip">
-                  <circle cx="100" cy="100" r="42"/>
-                </clipPath>
-                <radialGradient id="hero-groove-grad" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="rgba(20,160,55,0.82)"/>
-                  <stop offset="100%" stop-color="rgba(10,100,30,0.9)"/>
-                </radialGradient>
-              </defs>
-              <!-- Base disc -->
               <circle cx="100" cy="100" r="100" fill="rgba(20,160,55,0.82)"/>
-              <!-- Groove rings -->
               <circle cx="100" cy="100" r="50" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
               <circle cx="100" cy="100" r="52.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="55" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="57.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="62.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="65" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="67.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="65" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="72.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="77.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="82.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="87.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="92.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="97.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <!-- Sheen -->
+              <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
               <ellipse cx="80" cy="65" rx="30" ry="18" fill="rgba(255,255,255,0.06)" transform="rotate(-35 100 100)"/>
-              <!-- Label -->
-              <circle cx="100" cy="100" r="42" fill="#e8e0d0"/>
-              <circle cx="100" cy="100" r="41" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
-              <text x="100" y="93" text-anchor="middle" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#1a1a1a" letter-spacing="0.5">DON'T CARE</text>
-              <text x="100" y="101" text-anchor="middle" font-size="4" font-family="sans-serif" fill="#555" letter-spacing="0.3">A&amp;M RECORDS</text>
-              <text x="100" y="109" text-anchor="middle" font-size="4.5" font-family="sans-serif" font-weight="600" fill="#1a1a1a" letter-spacing="0.3">KLARK KENT</text>
-              <!-- Center hole -->
-              <circle cx="100" cy="100" r="4.5" fill="#f5f5f0"/>
-              <circle cx="100" cy="100" r="3" fill="#d0cdc8"/>
-            </svg>
-          </div>
-        </div>
-
-        <!-- Right info block -->
-        <div class="hero-info" id="hero-info">
-          <h1 class="hero-title">DON'T CARE<br/>KLARK KENT</h1>
-          <p class="hero-desc">
-            Klark Kent is the debut solo album of Stewart
-            Copeland, and the first solo album recorded by any
-            band member of The Police. The album was released
-            in 1980 as a 10 inch EP on green vinyl. It was
-            later re-released on black vinyl as a 12 inch with
-            a grey and black sleeve. It includes the song
-            "Don't Care", which had entered the UK Top 50 two
-            years earlier.
-          </p>
-          <button class="hero-purchase-btn" type="button">PURCHASE <span aria-hidden="true">&#8594;</span></button>
-        </div>
-
-      </section>
-
-      <!-- ═══════════════════════════════════════════════════
-           SCENE 2: GREEN FOCUS (slider 01/05)
-      ════════════════════════════════════════════════════ -->
-      <section class="scene scene--green-focus" id="scene-green-focus" aria-label="Green Focus Slider">
-
-        <!-- Ghost text background -->
-        <div class="ghost-text ghost-text--green" id="ghost-text-green" aria-hidden="true">
-          <span>DON'T<br/>CARE</span>
-        </div>
-
-        <!-- Left partial vinyl -->
-        <div class="vinyl-side vinyl-side--left" id="vinyl-left-green">
-          <div class="vinyl-disc-wrap">
-            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
-              <circle cx="100" cy="100" r="100" fill="rgba(18,140,50,0.75)"/>
-              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="38" fill="#e8e0d0"/>
-              <circle cx="100" cy="100" r="4" fill="#f0ede8"/>
-            </svg>
-          </div>
-        </div>
-
-        <!-- Center green vinyl -->
-        <div class="vinyl-center vinyl-center--green" id="vinyl-center-green">
-          <div class="vinyl-disc-wrap vinyl-disc-wrap--spin" id="vinyl-center-green-disc">
-            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
-              <defs>
-                <clipPath id="green-label-clip">
-                  <circle cx="100" cy="100" r="42"/>
-                </clipPath>
-              </defs>
-              <circle cx="100" cy="100" r="100" fill="rgba(22,160,60,0.85)"/>
-              <circle cx="100" cy="100" r="50" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="52.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="55" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="57.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="62.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="65" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="67.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="72.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="77.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="82.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="87.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="92.5" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/>
-              <!-- Sheen -->
-              <ellipse cx="80" cy="65" rx="30" ry="18" fill="rgba(255,255,255,0.06)" transform="rotate(-35 100 100)"/>
-              <!-- Label -->
               <circle cx="100" cy="100" r="42" fill="#e8e0d0"/>
               <circle cx="100" cy="100" r="41" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
               <text x="100" y="93" text-anchor="middle" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#1a1a1a" letter-spacing="0.5">DON'T CARE</text>
@@ -179,91 +128,23 @@
               <circle cx="100" cy="100" r="3" fill="#d0cdc8"/>
             </svg>
           </div>
-        </div>
 
-        <!-- Right partial vinyl -->
-        <div class="vinyl-side vinyl-side--right" id="vinyl-right-green">
-          <div class="vinyl-disc-wrap">
+          <!-- Disc 1: Black vinyl -->
+          <div class="detail-disc" id="detail-disc-1">
             <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
-              <circle cx="100" cy="100" r="100" fill="rgba(18,140,50,0.75)"/>
-              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="38" fill="#e8e0d0"/>
-              <circle cx="100" cy="100" r="4" fill="#f0ede8"/>
-            </svg>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- ═══════════════════════════════════════════════════
-           DIAGONAL WIPE OVERLAY
-      ════════════════════════════════════════════════════ -->
-      <div class="wipe-overlay" id="wipe-overlay" aria-hidden="true">
-        <svg class="wipe-svg" id="wipe-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <polygon id="wipe-polygon" points="110,0 110,0 110,100 110,100"/>
-        </svg>
-      </div>
-
-      <!-- ═══════════════════════════════════════════════════
-           SCENE 3: BROWN FOCUS (slider 02/05)
-      ════════════════════════════════════════════════════ -->
-      <section class="scene scene--brown-focus" id="scene-brown-focus" aria-label="Brown Focus Slider">
-
-        <!-- Ghost text background -->
-        <div class="ghost-text ghost-text--brown" id="ghost-text-brown" aria-hidden="true">
-          <span>EMI<br/>5040</span>
-        </div>
-
-        <!-- Left partial vinyl (green) -->
-        <div class="vinyl-side vinyl-side--left" id="vinyl-left-brown">
-          <div class="vinyl-disc-wrap">
-            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
-              <circle cx="100" cy="100" r="100" fill="rgba(22,160,60,0.85)"/>
-              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="38" fill="#e8e0d0"/>
-              <circle cx="100" cy="100" r="4" fill="#f0ede8"/>
-            </svg>
-          </div>
-        </div>
-
-        <!-- Center black vinyl -->
-        <div class="vinyl-center vinyl-center--black" id="vinyl-center-black">
-          <div class="vinyl-disc-wrap vinyl-disc-wrap--3d" id="vinyl-center-black-disc">
-            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
-              <defs>
-                <clipPath id="black-label-clip">
-                  <circle cx="100" cy="100" r="40"/>
-                </clipPath>
-              </defs>
               <circle cx="100" cy="100" r="100" fill="#111111"/>
               <circle cx="100" cy="100" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
               <circle cx="100" cy="100" r="52.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="55" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="57.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="62.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="65" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="67.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="65" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="72.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="77.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="82.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="87.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
               <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
-              <circle cx="100" cy="100" r="92.5" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
-              <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.7"/>
-              <!-- Sheen -->
+              <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="0.5"/>
               <ellipse cx="80" cy="65" rx="28" ry="16" fill="rgba(255,255,255,0.04)" transform="rotate(-35 100 100)"/>
-              <!-- Label: warm tan -->
               <circle cx="100" cy="100" r="40" fill="#c8784a"/>
               <circle cx="100" cy="100" r="39" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
               <text x="100" y="90" text-anchor="middle" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#fff" letter-spacing="0.5">EMI 5040</text>
@@ -273,49 +154,29 @@
               <circle cx="100" cy="100" r="3" fill="#d0cdc8"/>
             </svg>
           </div>
+
         </div>
 
-        <!-- Right partial vinyl (white) -->
-        <div class="vinyl-side vinyl-side--right" id="vinyl-right-brown">
-          <div class="vinyl-disc-wrap">
-            <svg class="vinyl-svg" viewBox="0 0 200 200" aria-hidden="true">
-              <circle cx="100" cy="100" r="100" fill="#f0f0ee"/>
-              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
-              <circle cx="100" cy="100" r="34" fill="#1a1a1a"/>
-              <circle cx="100" cy="100" r="4" fill="#f0ede8"/>
-            </svg>
-          </div>
+        <!-- Info panel -->
+        <div class="detail-info" id="detail-info">
+          <h1 class="detail-title" id="detail-title"></h1>
+          <p class="detail-desc" id="detail-desc"></p>
+          <button class="hero-purchase-btn" type="button">PURCHASE <span aria-hidden="true">&#8594;</span></button>
         </div>
 
       </section>
 
-      <!-- ═══════════════════════════════════════════════════
-           GRAIN OVERLAY
-      ════════════════════════════════════════════════════ -->
+      <!-- GRAIN OVERLAY -->
       <div class="grain-overlay" aria-hidden="true"></div>
 
-      <!-- ═══════════════════════════════════════════════════
-           COUNTER
-      ════════════════════════════════════════════════════ -->
-      <div class="ui-counter" id="ui-counter" aria-live="polite" aria-atomic="true">
-        <span class="counter-num" id="counter-num">01</span>
-        <span class="counter-sep">/</span>
-        <span class="counter-total">05</span>
-      </div>
-
-      <!-- ═══════════════════════════════════════════════════
-           ARROW BUTTONS
-      ════════════════════════════════════════════════════ -->
+      <!-- ARROW BUTTONS (detail navigation) -->
       <div class="ui-arrows" id="ui-arrows">
-        <button class="arrow-btn" id="btn-prev" type="button" aria-label="Previous">
+        <button class="arrow-btn" id="btn-prev" type="button" aria-label="Previous vinyl">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <polyline points="15 18 9 12 15 6"/>
           </svg>
         </button>
-        <button class="arrow-btn" id="btn-next" type="button" aria-label="Next">
+        <button class="arrow-btn" id="btn-next" type="button" aria-label="Next vinyl">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <polyline points="9 6 15 12 9 18"/>
           </svg>

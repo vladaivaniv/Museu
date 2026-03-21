@@ -1,522 +1,295 @@
 /**
  * VIINYL GALLERY — main.js
- * GSAP-driven scene state machine
  *
- * State indices:
- *   0  →  dark-hero
- *   1  →  green-focus
- *   2  →  brown-focus
- *
- * Navigation sequence (forward):  0 → 1 → 2 → 1 → 0 …
- * The counter shows:               01 → 02 → 03 → 04 → 05
+ * Flow:
+ *   selector  →  (click vinyl)  →  detail
+ *   detail    →  (back btn)     →  selector
+ *   detail    →  (drag / arrow) →  next / prev vinyl detail
  */
 
 // gsap loaded via CDN script tag in index.html
 /* global gsap */
 
-/* ── DOM REFERENCES ── */
-const stage          = document.getElementById('stage');
-const sceneDarkHero  = document.getElementById('scene-dark-hero');
-const sceneGreen     = document.getElementById('scene-green-focus');
-const sceneBrown     = document.getElementById('scene-brown-focus');
-
-const heroVinylDisc  = document.getElementById('hero-vinyl-disc');
-const heroVinylCover = document.getElementById('hero-vinyl-cover');
-const heroInfo       = document.getElementById('hero-info');
-
-const ghostGreen     = document.getElementById('ghost-text-green');
-const ghostBrown     = document.getElementById('ghost-text-brown');
-
-const vinylCenterGreenDisc  = document.getElementById('vinyl-center-green-disc');
-const vinylCenterBlackDisc  = document.getElementById('vinyl-center-black-disc');
-
-const wipeOverlay    = document.getElementById('wipe-overlay');
-const wipePolygon    = document.getElementById('wipe-polygon');
-
-const counterNum     = document.getElementById('counter-num');
-const uiCounter      = document.getElementById('ui-counter');
-const uiArrows       = document.getElementById('ui-arrows');
-
-const btnPrev        = document.getElementById('btn-prev');
-const btnNext        = document.getElementById('btn-next');
-
-/* ── SCENE STATE MACHINE ── */
-/*
- * Logical forward sequence:
- *   step 0 → dark-hero   (counter: 01)
- *   step 1 → green-focus (counter: 02)
- *   step 2 → brown-focus (counter: 03)
- *   step 3 → green-focus (counter: 04)  [same scene, different counter]
- *   step 4 → dark-hero   (counter: 05)  [loops back]
- *
- * We track `stepIndex` (0-4) and map it to a scene id.
- */
-const TOTAL_STEPS = 5;
-
-const stepMap = [
-  { scene: sceneDarkHero, counter: '01' },
-  { scene: sceneGreen,    counter: '02' },
-  { scene: sceneBrown,    counter: '03' },
-  { scene: sceneGreen,    counter: '04' },
-  { scene: sceneDarkHero, counter: '05' },
+/* ── VINYL DATA ── */
+const vinyls = [
+  {
+    id: 0,
+    title: 'DON\'T CARE',
+    artist: 'KLARK KENT',
+    desc: `Klark Kent is the debut solo album of Stewart Copeland, and the first solo album recorded by any band member of The Police. The album was released in 1980 as a 10 inch EP on green vinyl. It was later re-released on black vinyl as a 12 inch with a grey and black sleeve. It includes the song "Don't Care", which had entered the UK Top 50 two years earlier.`,
+    bg: '#0c1812',
+  },
+  {
+    id: 1,
+    title: 'WHAT\'S YOUR NUMBER',
+    artist: 'SNIPS',
+    desc: `A rare UK post-punk single released on EMI in 1980. Snips, the frontman of Baker Gurvitz Army, delivered this driving new wave cut on black vinyl with a striking warm-label pressing. Sought after by collectors of early 80s British punk ephemera.`,
+    bg: '#180e06',
+  },
 ];
 
-let currentStep    = 0;
+/* ── DOM ── */
+const stage          = document.getElementById('stage');
+const sceneSelector  = document.getElementById('scene-selector');
+const sceneDetail    = document.getElementById('scene-detail');
+const detailCover    = document.getElementById('detail-cover');
+const detailVinylWrap = document.getElementById('detail-vinyl-wrap');
+const detailInfo     = document.getElementById('detail-info');
+const detailTitle    = document.getElementById('detail-title');
+const detailDesc     = document.getElementById('detail-desc');
+const detailDiscs    = [
+  document.getElementById('detail-disc-0'),
+  document.getElementById('detail-disc-1'),
+];
+const btnBack        = document.getElementById('btn-back');
+const btnPrev        = document.getElementById('btn-prev');
+const btnNext        = document.getElementById('btn-next');
+const uiArrows       = document.getElementById('ui-arrows');
+
+/* ── STATE ── */
+let currentView     = 'selector';
+let selectedIndex   = 0;
 let isTransitioning = false;
 
 /* ── HELPERS ── */
-
-/**
- * Set the active scene class (opacity + pointer-events via CSS).
- * We keep the previous scene visible during the transition by not
- * removing its .is-active until the timeline calls for it.
- */
-function setSceneActive(sceneEl) {
-  [sceneDarkHero, sceneGreen, sceneBrown].forEach(s => {
-    if (s !== sceneEl) {
-      s.classList.remove('is-active');
-    }
+function showDisc(index) {
+  detailDiscs.forEach((d, i) => {
+    gsap.set(d, { display: i === index ? 'block' : 'none' });
   });
-  sceneEl.classList.add('is-active');
 }
 
-function updateCounter(value) {
-  gsap.to(counterNum, {
+function populateDetail(index) {
+  const v = vinyls[index];
+  detailTitle.innerHTML = `${v.title}<br/>${v.artist}`;
+  detailDesc.textContent = v.desc;
+  stage.style.background = v.bg;
+  showDisc(index);
+}
+
+/* ── INIT ── */
+function init() {
+  sceneSelector.classList.add('is-active');
+  gsap.set(sceneDetail, { opacity: 0 });
+  gsap.set([uiArrows, btnBack], { opacity: 0, pointerEvents: 'none' });
+
+  // Stagger vinyls in
+  gsap.from('.selector-item', {
+    y: 50,
     opacity: 0,
-    y: -8,
-    duration: 0.18,
+    duration: 0.8,
+    stagger: 0.18,
+    ease: 'power3.out',
+    delay: 0.2,
+  });
+}
+
+/* ── SELECTOR → DETAIL ── */
+function openDetail(index) {
+  if (isTransitioning) return;
+  isTransitioning = true;
+  selectedIndex = index;
+
+  populateDetail(index);
+  gsap.set(detailCover, { x: '110%' });
+  gsap.set(detailInfo,  { opacity: 0, x: 40 });
+  gsap.set(detailVinylWrap, { scale: 0.88, opacity: 0 });
+
+  const tl = gsap.timeline({
     onComplete: () => {
-      counterNum.textContent = value;
-      gsap.to(counterNum, { opacity: 1, y: 0, duration: 0.22 });
-    }
+      currentView = 'detail';
+      isTransitioning = false;
+    },
   });
-}
 
-function setUIMode(mode /* 'light' | 'dark' */) {
-  if (mode === 'light') {
-    uiCounter.classList.add('is-light');
-    uiArrows.classList.add('is-light');
-  } else {
-    uiCounter.classList.remove('is-light');
-    uiArrows.classList.remove('is-light');
-  }
-}
-
-/* ── WIPE POLYGON HELPERS ── */
-/*
- * The SVG viewBox is 0 0 100 100 (with preserveAspectRatio="none").
- * We animate the polygon's points attribute for the diagonal wipe.
- *
- * Collapsed (off right side):
- *   "110,0  110,0  110,100  110,100"
- *
- * Diagonal mid-state (ribbon covering upper-right to lower-left):
- *   "-10,0  110,0  110,100  -10,100"   (full cover)
- *
- * We use GSAP's attr tween plus a custom interpolator.
- */
-
-function buildPoints(x0, x1) {
-  // top-left, top-right, bottom-right, bottom-left
-  // The wipe has a slight diagonal slant: top edge advances faster
-  return `${x0 - 15},0 ${x1},0 ${x1 + 5},100 ${x0},100`;
-}
-
-function setWipePoints(pct) {
-  // pct 0 = fully off right, pct 1 = fully covering
-  const startX = 110 + ((-10 - 110) * pct);   // 110 → -10
-  const endX   = 110 + ((115 - 110) * pct);    // 110 → 115 (keep full right side covered)
-  wipePolygon.setAttribute('points', buildPoints(startX, endX));
-}
-
-/* ── INITIAL STATE ── */
-function initScene() {
-  // Only dark-hero is visible
-  sceneDarkHero.classList.add('is-active');
-  gsap.set(sceneDarkHero, { opacity: 1 });
-  gsap.set([sceneGreen, sceneBrown], { opacity: 0 });
-
-  // Wipe overlay hidden
-  gsap.set(wipeOverlay, { opacity: 0 });
-
-  // Hero vinyl spinning (via CSS animation already), add initial offset
-  gsap.set(heroVinylDisc, { rotation: 0 });
-
-  // Hero info: fade in
-  gsap.from(heroInfo, {
-    x: 40,
+  // Selector items fly out
+  tl.to('.selector-item', {
+    y: -40,
     opacity: 0,
-    duration: 1.2,
-    ease: 'power3.out',
-    delay: 0.3,
-  });
-
-  // Square album cover slides in from the right, rests at -40% (covers left 60% of disc)
-  gsap.set(heroVinylCover, { opacity: 1, x: '110%' });
-  gsap.to(heroVinylCover, {
-    x: '-58%',
-    duration: 0.9,
-    ease: 'power3.out',
-    delay: 2.0,
-  });
-
-  setUIMode('light');
-}
-
-/* ══════════════════════════════════════════════════════════
-   TRANSITIONS
-══════════════════════════════════════════════════════════ */
-
-/* ── DARK HERO → GREEN FOCUS ── */
-function transitionToGreen(onComplete) {
-  const tl = gsap.timeline({ onComplete });
-
-  // Fade out hero info; slide cover back out to the right
-  tl.to(heroInfo, {
-    opacity: 0,
-    x: 30,
-    duration: 0.4,
+    duration: 0.32,
+    stagger: 0.06,
     ease: 'power2.in',
-  }, 0);
-  tl.to(heroVinylCover, {
-    x: '110%',
-    duration: 0.35,
-    ease: 'power2.in',
-  }, 0);
-
-  // Fade out dark hero, fade in green
-  tl.to(sceneDarkHero, { opacity: 0, duration: 0.5, ease: 'power2.in' }, 0.15);
+  });
 
   tl.call(() => {
-    sceneGreen.classList.add('is-active');
-    sceneDarkHero.classList.remove('is-active');
-    setUIMode('dark');
+    sceneSelector.classList.remove('is-active');
+    gsap.set(sceneSelector, { opacity: 0 });
+    sceneDetail.classList.add('is-active');
   });
 
-  tl.fromTo(sceneGreen,
-    { opacity: 0 },
-    { opacity: 1, duration: 0.55, ease: 'power2.out' }
-  );
+  // Detail fades in
+  tl.to(sceneDetail, { opacity: 1, duration: 0.4, ease: 'power2.out' });
 
-  // Green vinyl slides in from left-center
-  tl.from('#vinyl-center-green', {
-    x: -80,
-    opacity: 0,
-    duration: 0.7,
+  // Disc pops in
+  tl.to(detailVinylWrap, {
+    scale: 1,
+    opacity: 1,
+    duration: 0.6,
+    ease: 'back.out(1.3)',
+  }, '-=0.25');
+
+  // Info slides in
+  tl.to(detailInfo, {
+    opacity: 1,
+    x: 0,
+    duration: 0.5,
     ease: 'power3.out',
   }, '-=0.35');
 
-  // Ghost text fades up
-  tl.from(ghostGreen, {
-    opacity: 0,
-    scale: 0.95,
-    duration: 0.6,
-    ease: 'power2.out',
-  }, '-=0.5');
-
-  // Side vinyls
-  tl.from('#vinyl-left-green', {
-    x: -40,
-    opacity: 0,
-    duration: 0.55,
-    ease: 'power2.out',
-  }, '-=0.45');
-  tl.from('#vinyl-right-green', {
-    x: 40,
-    opacity: 0,
-    duration: 0.55,
-    ease: 'power2.out',
-  }, '-=0.55');
-
-  return tl;
-}
-
-/* ── GREEN FOCUS → BROWN FOCUS (diagonal wipe) ── */
-function transitionGreenToBrown(onComplete) {
-  const tl = gsap.timeline({ onComplete });
-
-  // Stage: make wipe overlay visible
-  tl.set(wipeOverlay, { opacity: 1 });
-  tl.call(() => { setWipePoints(0); }); // Start off-screen right
-
-  // Brown scene ready behind the wipe
-  tl.call(() => {
-    sceneGreen.style.zIndex  = '2';
-    sceneBrown.style.zIndex  = '3';
-    gsap.set(sceneBrown, { opacity: 1 });
-  });
-
-  // Animate the diagonal wipe from right to left
-  tl.to({}, {
-    duration: 0.95,
-    ease: 'power3.inOut',
-    onUpdate: function () {
-      setWipePoints(this.progress());
-    }
-  });
-
-  // Clean up
-  tl.call(() => {
-    sceneBrown.classList.add('is-active');
-    sceneGreen.classList.remove('is-active');
-    sceneGreen.style.zIndex  = '';
-    sceneBrown.style.zIndex  = '';
-    gsap.set(sceneGreen, { opacity: 0 });
-    gsap.set(wipeOverlay, { opacity: 0 });
-    setUIMode('dark');
-  });
-
-  // Animate brown scene elements in
-  tl.from('#vinyl-center-black', {
-    scale: 0.9,
-    opacity: 0,
-    duration: 0.5,
-    ease: 'back.out(1.4)',
-  });
-  tl.from(ghostBrown, {
-    opacity: 0,
-    scale: 0.95,
-    duration: 0.45,
-    ease: 'power2.out',
-  }, '-=0.4');
-  tl.from('#vinyl-left-brown', {
-    x: -40,
-    opacity: 0,
-    duration: 0.4,
-    ease: 'power2.out',
-  }, '-=0.4');
-  tl.from('#vinyl-right-brown', {
-    x: 40,
-    opacity: 0,
-    duration: 0.4,
-    ease: 'power2.out',
-  }, '-=0.4');
-
-  return tl;
-}
-
-/* ── BROWN FOCUS → GREEN FOCUS (reverse wipe) ── */
-function transitionBrownToGreen(onComplete) {
-  const tl = gsap.timeline({ onComplete });
-
-  tl.set(wipeOverlay, { opacity: 1 });
-
-  // Use a reversed wipe: wipe goes from left to right, fill is green-bg
-  tl.call(() => {
-    // Change wipe color to green
-    wipePolygon.style.fill = '#189638';
-  });
-  tl.call(() => { setWipePoints(0); });
-
-  tl.call(() => {
-    sceneBrown.style.zIndex = '2';
-    sceneGreen.style.zIndex = '3';
-    gsap.set(sceneGreen, { opacity: 1 });
-  });
-
-  // Wipe animation (same direction, color change creates reverse illusion)
-  tl.to({}, {
-    duration: 0.95,
-    ease: 'power3.inOut',
-    onUpdate: function () {
-      setWipePoints(this.progress());
-    }
-  });
-
-  tl.call(() => {
-    sceneGreen.classList.add('is-active');
-    sceneBrown.classList.remove('is-active');
-    sceneBrown.style.zIndex = '';
-    sceneGreen.style.zIndex = '';
-    gsap.set(sceneBrown, { opacity: 0 });
-    gsap.set(wipeOverlay, { opacity: 0 });
-    // Reset wipe color for next forward transition
-    wipePolygon.style.fill = '';
-    setUIMode('dark');
-  });
-
-  // Green scene pop-in
-  tl.from('#vinyl-center-green', {
-    scale: 0.9,
-    duration: 0.4,
-    ease: 'back.out(1.2)',
-  });
-
-  return tl;
-}
-
-/* ── GREEN FOCUS → DARK HERO ── */
-function transitionGreenToDark(onComplete) {
-  const tl = gsap.timeline({ onComplete });
-
-  // Fade out green scene
-  tl.to(sceneGreen, { opacity: 0, duration: 0.45, ease: 'power2.in' }, 0);
-
-  tl.call(() => {
-    sceneGreen.classList.remove('is-active');
-    gsap.set(sceneDarkHero, { opacity: 1 });
-    sceneDarkHero.classList.add('is-active');
-    setUIMode('light');
-  });
-
-  tl.fromTo(sceneDarkHero, { opacity: 0 }, { opacity: 1, duration: 0.55, ease: 'power2.out' });
-
-  // Hero info re-enters
-  tl.set(heroInfo, { opacity: 0, x: 30 });
-  tl.to(heroInfo, { opacity: 1, x: 0, duration: 0.65, ease: 'power3.out' }, '-=0.3');
-
-  // Cover slides in again from the right
-  tl.set(heroVinylCover, { x: '110%' });
-  tl.to(heroVinylCover, {
+  // Cover slides over disc
+  tl.to(detailCover, {
     x: '-58%',
-    duration: 0.75,
+    duration: 0.85,
     ease: 'power3.out',
   }, '-=0.3');
 
-  return tl;
+  // Show back + arrows
+  tl.to([btnBack, uiArrows], { opacity: 1, duration: 0.25 }, '-=0.4');
+  tl.set([btnBack, uiArrows], { pointerEvents: 'auto' });
 }
 
-/* ── BROWN FOCUS 3D FLIP (then transition to green-return or dark) ── */
-function doBlackVinylFlip(onComplete) {
-  const tl = gsap.timeline({ onComplete });
-
-  // 3D Y-axis flip on black vinyl
-  tl.to(vinylCenterBlackDisc, {
-    rotationY: 90,
-    duration: 0.5,
-    ease: 'power2.in',
-  });
-  tl.to(vinylCenterBlackDisc, {
-    rotationY: 0,
-    duration: 0.5,
-    ease: 'power2.out',
-  });
-
-  return tl;
-}
-
-/* ══════════════════════════════════════════════════════════
-   NAVIGATION
-══════════════════════════════════════════════════════════ */
-
-function goNext() {
+/* ── DETAIL → SELECTOR ── */
+function goBackToSelector() {
   if (isTransitioning) return;
-  if (currentStep >= TOTAL_STEPS - 1) return; // already at end, loop handled
   isTransitioning = true;
 
-  const nextStep = currentStep + 1;
-  const stepInfo = stepMap[nextStep];
-  updateCounter(stepInfo.counter);
+  const tl = gsap.timeline({
+    onComplete: () => {
+      currentView = 'selector';
+      isTransitioning = false;
+    },
+  });
 
-  function done() {
-    currentStep = nextStep;
-    isTransitioning = false;
-  }
+  tl.set([btnBack, uiArrows], { pointerEvents: 'none' });
+  tl.to([btnBack, uiArrows], { opacity: 0, duration: 0.2 });
 
-  // Determine which transition to fire
-  if (currentStep === 0 && nextStep === 1) {
-    // dark-hero → green-focus
-    transitionToGreen(done);
+  // Cover and info exit
+  tl.to(detailCover, { x: '110%', duration: 0.35, ease: 'power2.in' }, 0);
+  tl.to(detailInfo,  { opacity: 0, x: 40, duration: 0.3, ease: 'power2.in' }, 0);
+  tl.to(detailVinylWrap, { scale: 0.9, opacity: 0, duration: 0.4, ease: 'power2.in' }, 0.05);
 
-  } else if (currentStep === 1 && nextStep === 2) {
-    // green-focus → brown-focus (diagonal wipe)
-    transitionGreenToBrown(done);
+  // Detail fades out
+  tl.to(sceneDetail, { opacity: 0, duration: 0.35, ease: 'power2.in' }, 0.1);
 
-  } else if (currentStep === 2 && nextStep === 3) {
-    // brown-focus → green-focus (reverse wipe)
-    // Optionally trigger flip first
-    doBlackVinylFlip(() => {
-      transitionBrownToGreen(done);
-    });
-
-  } else if (currentStep === 3 && nextStep === 4) {
-    // green-focus → dark-hero
-    transitionGreenToDark(done);
-
-  } else {
-    // Fallback: simple crossfade
-    crossfadeScenes(stepMap[currentStep].scene, stepInfo.scene, done);
-  }
-}
-
-function goPrev() {
-  if (isTransitioning) return;
-  if (currentStep <= 0) return;
-  isTransitioning = true;
-
-  const prevStep = currentStep - 1;
-  const stepInfo = stepMap[prevStep];
-  updateCounter(stepInfo.counter);
-
-  function done() {
-    currentStep = prevStep;
-    isTransitioning = false;
-  }
-
-  if (currentStep === 4 && prevStep === 3) {
-    // dark-hero → green-focus (prev direction)
-    transitionToGreen(done);
-
-  } else if (currentStep === 3 && prevStep === 2) {
-    // green-focus → brown-focus (reverse: wipe right to left)
-    transitionGreenToBrown(done);
-
-  } else if (currentStep === 2 && prevStep === 1) {
-    // brown-focus → green-focus
-    transitionBrownToGreen(done);
-
-  } else if (currentStep === 1 && prevStep === 0) {
-    // green-focus → dark-hero
-    transitionGreenToDark(done);
-
-  } else {
-    crossfadeScenes(stepMap[currentStep].scene, stepInfo.scene, done);
-  }
-}
-
-function crossfadeScenes(fromScene, toScene, onComplete) {
-  const tl = gsap.timeline({ onComplete });
-  tl.to(fromScene, { opacity: 0, duration: 0.4, ease: 'power2.in' });
   tl.call(() => {
-    fromScene.classList.remove('is-active');
-    toScene.classList.add('is-active');
-    gsap.set(toScene, { opacity: 1 });
+    sceneDetail.classList.remove('is-active');
+    sceneSelector.classList.add('is-active');
+    gsap.set(sceneSelector, { opacity: 1 });
+    stage.style.background = '';
+    // Reset selector items for animation
+    gsap.set('.selector-item', { y: 40, opacity: 0 });
   });
-  tl.fromTo(toScene, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'power2.out' });
+
+  tl.to('.selector-item', {
+    y: 0,
+    opacity: 1,
+    duration: 0.55,
+    stagger: 0.1,
+    ease: 'power3.out',
+  });
+}
+
+/* ── DETAIL: NAVIGATE TO NEXT / PREV VINYL ── */
+function navigateDetail(direction /* +1 | -1 */) {
+  if (isTransitioning) return;
+  const next = selectedIndex + direction;
+  if (next < 0 || next >= vinyls.length) return;
+
+  isTransitioning = true;
+  const exitX = direction * -80;
+  const enterX = direction * 80;
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      selectedIndex = next;
+      isTransitioning = false;
+    },
+  });
+
+  // Exit
+  tl.to(detailCover, { x: direction > 0 ? '-160%' : '110%', duration: 0.3, ease: 'power2.in' }, 0);
+  tl.to([detailInfo, detailVinylWrap], {
+    opacity: 0,
+    x: exitX,
+    duration: 0.3,
+    ease: 'power2.in',
+  }, 0);
+
+  // Swap content
+  tl.call(() => {
+    populateDetail(next);
+    gsap.set(detailCover, { x: '110%' });
+    gsap.set([detailInfo, detailVinylWrap], { x: enterX, opacity: 0 });
+  });
+
+  // Enter
+  tl.to([detailInfo, detailVinylWrap], {
+    opacity: 1,
+    x: 0,
+    duration: 0.45,
+    ease: 'power3.out',
+  });
+
+  tl.to(detailCover, {
+    x: '-58%',
+    duration: 0.75,
+    ease: 'power3.out',
+  }, '-=0.35');
 }
 
 /* ── EVENT LISTENERS ── */
-btnNext.addEventListener('click', goNext);
-btnPrev.addEventListener('click', goPrev);
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goNext();
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goPrev();
+// Selector: click to open
+document.querySelectorAll('.selector-item').forEach(item => {
+  item.addEventListener('click', () => {
+    openDetail(parseInt(item.dataset.index, 10));
+  });
 });
 
-/* Touch swipe */
+// Detail: back
+btnBack.addEventListener('click', goBackToSelector);
+
+// Detail: arrows
+btnNext.addEventListener('click', () => navigateDetail(1));
+btnPrev.addEventListener('click', () => navigateDetail(-1));
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'     && currentView === 'detail')   goBackToSelector();
+  if (e.key === 'ArrowRight' && currentView === 'detail')   navigateDetail(1);
+  if (e.key === 'ArrowLeft'  && currentView === 'detail')   navigateDetail(-1);
+});
+
+// Touch swipe
 let touchStartX = 0;
-document.addEventListener('touchstart', (e) => {
+document.addEventListener('touchstart', e => {
   touchStartX = e.touches[0].clientX;
 }, { passive: true });
-document.addEventListener('touchend', (e) => {
+document.addEventListener('touchend', e => {
+  if (currentView !== 'detail') return;
   const dx = e.changedTouches[0].clientX - touchStartX;
   if (Math.abs(dx) > 50) {
-    if (dx < 0) goNext();
-    else goPrev();
+    if (dx < 0) navigateDetail(1);
+    else         navigateDetail(-1);
   }
 });
 
-/* ── INIT ── */
-initScene();
-
-/* ── AMBIENT SPIN ── */
-// The center vinyl spin is handled by CSS animation.
-// Additionally, we give the hero vinyl a subtle idle wobble.
-gsap.to(heroVinylDisc, {
-  scale: 1.025,
-  duration: 4,
-  ease: 'sine.inOut',
-  yoyo: true,
-  repeat: -1,
+// Mouse drag
+let dragStartX   = 0;
+let isDragging   = false;
+document.addEventListener('mousedown', e => {
+  if (currentView !== 'detail') return;
+  dragStartX = e.clientX;
+  isDragging = true;
 });
+document.addEventListener('mouseup', e => {
+  if (!isDragging || currentView !== 'detail') { isDragging = false; return; }
+  isDragging = false;
+  const dx = e.clientX - dragStartX;
+  if (Math.abs(dx) > 60) {
+    if (dx < 0) navigateDetail(1);
+    else         navigateDetail(-1);
+  }
+});
+
+/* ── START ── */
+init();
