@@ -155,7 +155,7 @@ function initScene() {
   // Square album cover slides in from the right, rests at -40% (covers left 60% of disc)
   gsap.set(heroVinylCover, { opacity: 1, x: '110%' });
   gsap.to(heroVinylCover, {
-    x: '-40%',
+    x: '-58%',
     duration: 0.9,
     ease: 'power3.out',
     delay: 2.0,
@@ -374,7 +374,7 @@ function transitionGreenToDark(onComplete) {
   // Cover slides in again from the right
   tl.set(heroVinylCover, { x: '110%' });
   tl.to(heroVinylCover, {
-    x: '-40%',
+    x: '-58%',
     duration: 0.75,
     ease: 'power3.out',
   }, '-=0.3');

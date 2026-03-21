@@ -176,7 +176,7 @@ html, body {
 /* Hero vinyl wrap */
 .hero-vinyl-wrap {
   position: absolute;
-  left: 40%;
+  left: 36%;
   top: 50%;
   transform: translate(-50%, -50%);
   width: 420px;
@@ -535,7 +535,7 @@ html, body {
   .hero-vinyl-wrap {
     width: 300px;
     height: 300px;
-    left: 35%;
+    left: 30%;
   }
   .hero-title {
     font-size: 3rem;
