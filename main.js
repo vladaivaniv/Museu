@@ -229,7 +229,7 @@ function init() {
 
 /* ── SELECTOR → DETAIL ── */
 function openDetail(index) {
-  if (isTransitioning || index < 0 || index >= vinyls.length) return;
+  if (isTransitioning || !Number.isInteger(index) || index < 0 || index >= vinyls.length) return;
   isTransitioning = true;
   selectedIndex = index;
 
@@ -393,25 +393,30 @@ selectorItems.forEach(item => {
     openDetail(parseInt(item.dataset.index, 10));
   });
   item.addEventListener('keydown', event => {
-    const index = parseInt(item.dataset.index, 10);
-    if (event.key === 'Enter' || event.key === ' ') {
+    const index = Number.parseInt(item.dataset.index ?? '', 10);
+
+    if ((event.key === 'Enter' || event.key === ' ') && Number.isInteger(index)) {
       event.preventDefault();
       openDetail(index);
       return;
     }
-    if (event.key === 'ArrowRight') {
+
+    if (event.key === 'ArrowRight' && Number.isInteger(index)) {
       event.preventDefault();
       const nextIndex = Math.min(index + 1, vinyls.length - 1);
       selectedIndex = nextIndex;
       centerSelectorItem(nextIndex);
       updateSelectorVisibility(nextIndex);
+      selectorItems[nextIndex]?.focus();
     }
-    if (event.key === 'ArrowLeft') {
+
+    if (event.key === 'ArrowLeft' && Number.isInteger(index)) {
       event.preventDefault();
       const prevIndex = Math.max(index - 1, 0);
       selectedIndex = prevIndex;
       centerSelectorItem(prevIndex);
       updateSelectorVisibility(prevIndex);
+      selectorItems[prevIndex]?.focus();
     }
   });
 });
