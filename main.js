@@ -99,6 +99,8 @@ const btnBack        = document.getElementById('btn-back');
 const btnPrev        = document.getElementById('btn-prev');
 const btnNext        = document.getElementById('btn-next');
 const uiArrows       = document.getElementById('ui-arrows');
+const screenshotParam = new URLSearchParams(window.location.search).get('screenshot');
+const isScreenshotMode = screenshotParam === '1' || screenshotParam === 'true';
 
 const requiredNodes = [
   stage,
@@ -192,6 +194,15 @@ function centerSelectorItem(index, behavior = 'smooth') {
 
 /* ── INIT ── */
 function init() {
+  if (isScreenshotMode) {
+    document.body.classList.add('is-screenshot-mode');
+    document.documentElement.classList.add('is-screenshot-mode');
+    sceneSelector.classList.add('is-active');
+    sceneDetail.classList.remove('is-active');
+    gsap.set(sceneSelector, { opacity: 1, pointerEvents: 'auto' });
+    gsap.set(sceneDetail, { opacity: 0, pointerEvents: 'none' });
+  }
+
   selectedIndex = 0;
   sceneSelector.classList.add('is-active');
   gsap.set(sceneDetail, { opacity: 0 });
@@ -201,15 +212,17 @@ function init() {
   requestAnimationFrame(() => centerSelectorItem(selectedIndex, 'auto'));
   setTimeout(() => centerSelectorItem(selectedIndex, 'auto'), 120);
 
-  // Stagger vinyls in
-  gsap.from('.selector-item', {
-    y: 50,
-    opacity: 0,
-    duration: 0.8,
-    stagger: 0.18,
-    ease: 'power3.out',
-    delay: 0.2,
-  });
+  // Stagger vinyls in (disabled in screenshot mode for a static capture-ready view)
+  if (!isScreenshotMode) {
+    gsap.from('.selector-item', {
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.18,
+      ease: 'power3.out',
+      delay: 0.2,
+    });
+  }
 }
 
 /* ── SELECTOR → DETAIL ── */
