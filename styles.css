@@ -191,7 +191,8 @@ html, body {
   letter-spacing: 0.015em;
   line-height: 0.86;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.11);
+  color: rgba(255, 255, 255, 0.32);
+  text-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
   max-width: 6.6ch;
   text-wrap: balance;
 }
@@ -202,7 +203,7 @@ html, body {
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* ═══════════════════════════════════════════════
