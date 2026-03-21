@@ -113,6 +113,7 @@ function showDisc(index) {
 
 function populateDetail(index) {
   const v = vinyls[index];
+  if (!v) { console.error('[VIINYL] No vinyl at index', index); return; }
   detailTitle.innerHTML = `${v.title}<br/>${v.artist}`;
   detailDesc.textContent = v.desc;
   stage.style.background = v.bg;
@@ -138,7 +139,7 @@ function init() {
 
 /* ── SELECTOR → DETAIL ── */
 function openDetail(index) {
-  if (isTransitioning) return;
+  if (isTransitioning || index < 0 || index >= vinyls.length) return;
   isTransitioning = true;
   selectedIndex = index;
 
