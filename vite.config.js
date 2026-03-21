@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/Museu/',
+  // Relative base avoids broken asset URLs when serving from root,
+  // sub-paths, or opening the built files from static hosting.
+  base: './',
   server: {
     port: 5173,
-    open: true,
+    open: false,
   },
   build: {
     outDir: 'dist',
