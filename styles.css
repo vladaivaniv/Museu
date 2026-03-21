@@ -26,6 +26,11 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+html.is-screenshot-mode,
+body.is-screenshot-mode {
+  overflow: auto;
+}
+
 /* ── VIEWPORT WRAPPER ── */
 .viewport-wrap {
   position: fixed;
@@ -184,6 +189,16 @@ html, body {
 }
 .selector-item:not(.is-center) .selector-meta { opacity: 0; }
 
+body.is-screenshot-mode .selector-item {
+  transition: none;
+}
+body.is-screenshot-mode .selector-item.is-hidden {
+  opacity: 0.25;
+}
+body.is-screenshot-mode .selector-item .selector-meta {
+  opacity: 1;
+}
+
 .selector-title {
   font-family: var(--font-condensed);
   font-size: clamp(2.8rem, 8vw, 7.5rem);
@@ -195,6 +210,11 @@ html, body {
   text-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
   max-width: 6.6ch;
   text-wrap: balance;
+}
+
+body.is-screenshot-mode .selector-disc,
+body.is-screenshot-mode .detail-disc {
+  animation-play-state: paused;
 }
 
 .selector-artist {
