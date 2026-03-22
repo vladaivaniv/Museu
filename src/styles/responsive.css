@@ -1,6 +1,7 @@
 @media (max-width: 900px) {
   .detail-vinyl-wrap { width: 300px; height: 300px; left: 32%; }
   .detail-title { font-size: 3rem; }
+  .landing-hero-title { font-size: clamp(2.2rem, 8vw, 5rem); }
 }
 
 @media (max-width: 600px) {
@@ -8,10 +9,18 @@
   .selector-item { flex: 0 0 92%; }
   .selector-disc { width: min(290px, 74vw); height: min(290px, 74vw); }
   .selector-meta { margin-top: -5.6rem; opacity: 1; }
-  .selector-title { font-size: clamp(2.5rem, 20vw, 6rem); }
+  .selector-title { font-size: clamp(1.8rem, 14vw, 4rem); }
   .detail-info { right: 1rem; left: 42%; }
-  .detail-title { font-size: 2.2rem; }
+  .detail-title { font-size: 1.8rem; }
   .detail-vinyl-wrap { width: 260px; height: 260px; left: 30%; }
+  .landing-hero-title { font-size: clamp(1.8rem, 7vw, 3.5rem); letter-spacing: 0.03em; }
+  .landing-counter { font-size: 0.45rem; }
+}
+
+@media (max-width: 400px) {
+  .landing-hero-title { font-size: clamp(1.4rem, 6vw, 2.5rem); }
+  .detail-title { font-size: 1.4rem; }
+  .selector-title { font-size: clamp(1.4rem, 12vw, 3rem); }
 }
 
 @media (prefers-reduced-motion: reduce) {
