@@ -22,8 +22,6 @@ const Selector = forwardRef(function Selector(
       aria-label="Vinyl Selector"
       ref={sceneRef}
     >
-      <p className="selector-heading">Projectes UDL - Vladyslava Ivaniv</p>
-
       <div className="selector-rack-wrap">
         <div className="selector-rack" ref={rackRef}>
           {vinyls.map((vinyl, i) => (
