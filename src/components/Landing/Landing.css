@@ -78,7 +78,7 @@
 
 .landing-hero-title {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(3rem, 10vw, 9rem);
+  font-size: clamp(1.8rem, 5vw, 4.5rem);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
