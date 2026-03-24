@@ -44,7 +44,6 @@ export default function Landing() {
   const [entered, setEntered] = useState(false);
   const rafRef = useRef(null);
   const dragRef = useRef({ active: false, index: -1, offsetX: 0, offsetY: 0 });
-  const mouseDownRef = useRef(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -85,9 +84,6 @@ export default function Landing() {
       const my = mousePos.current.y;
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
-      const imgPx = Math.min(rect.width, rect.height) * IMG_SIZE_VW / 100;
-      const repelRadius = imgPx * 0.7;
-
       const now = performance.now();
       const enteredAt = enteredAtRef.current;
 
@@ -107,38 +103,6 @@ export default function Landing() {
           body.vx = 0;
           body.vy = 0;
         } else {
-          // Repel from cursor when mouse is down (pushing)
-          if (mouseDownRef.current && !dragRef.current.active) {
-            const ax = centerX + body.x;
-            const ay = centerY + body.y;
-            const dx = ax - mx;
-            const dy = ay - my;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < repelRadius && dist > 0) {
-              const force = ((repelRadius - dist) / repelRadius) * 35;
-              const angle = Math.atan2(dy, dx);
-              body.vx += Math.cos(angle) * force;
-              body.vy += Math.sin(angle) * force;
-            }
-          }
-
-          // Also repel on plain hover (lighter)
-          if (!mouseDownRef.current) {
-            const ax = centerX + body.x;
-            const ay = centerY + body.y;
-            const dx = ax - mx;
-            const dy = ay - my;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < repelRadius * 0.6 && dist > 0) {
-              const force = ((repelRadius * 0.6 - dist) / (repelRadius * 0.6)) * 12;
-              const angle = Math.atan2(dy, dx);
-              body.vx += Math.cos(angle) * force;
-              body.vy += Math.sin(angle) * force;
-            }
-          }
-
           // Apply velocity
           body.x += body.vx;
           body.y += body.vy;
@@ -224,7 +188,6 @@ export default function Landing() {
   }, [hitTest]);
 
   const handleMouseDown = useCallback((e) => {
-    mouseDownRef.current = true;
     const hero = heroRef.current;
     if (!hero) return;
     const rect = hero.getBoundingClientRect();
@@ -246,7 +209,6 @@ export default function Landing() {
   }, [hitTest]);
 
   const handleMouseUp = useCallback(() => {
-    mouseDownRef.current = false;
     if (dragRef.current.active) {
       // Give a throw velocity based on last mouse movement
       const body = bodies.current[dragRef.current.index];
